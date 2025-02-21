@@ -16,21 +16,49 @@ import theme from "../theme";
 import { requestSoundDescriptions } from "../scripts/gpt-request";
 
 const DisplayPhotoScreen = ({ route, navigation }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [sound, setSound] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [sounds, setSounds] = useState(null);
+  const [soundDescriptions, setSoundDescriptions] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [timeEllapsed, setTimeEllapsed] = useState(0);
   const [duration, setDuration] = useState(-1);
 
   useEffect(() => {
-    requestSoundDescriptions(route.params.photo.base64);
-    // reqSound();
+    const reqSounds = async () => {
+      setIsLoading(true);
+
+      await Audio.setAudioModeAsync({
+        staysActiveInBackground: true,
+        interruptionModeAndroid: 1,
+        shouldDuckAndroid: true,
+        playThroughEarpieceAndroid: true,
+        allowsRecordingIOS: true,
+        interruptionModeIOS: 0,
+        playsInSilentModeIOS: true,
+      });
+      const descriptions = await requestSoundDescriptions(
+        route.params.photo.base64
+      );
+      setSoundDescriptions(descriptions);
+
+      const newSounds = await Promise.all(
+        descriptions.map(async (desc) => {
+          const sound = await reqSound(desc);
+          return sound;
+        })
+      );
+
+      setSounds(newSounds);
+
+      setIsLoading(false);
+    };
+
+    reqSounds();
   }, []);
 
-  const reqSound = async () => {
-    setIsLoading(true);
-    const soundUrl = await requestSound("busy cafe");
-    await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+  const reqSound = async (desc) => {
+    const soundUrl = await requestSound(desc);
+    console.log(desc, ":", soundUrl);
     const sound = new Audio.Sound();
     await sound.loadAsync(
       {
@@ -42,29 +70,31 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
     const status = await sound.getStatusAsync();
     setDuration(status.durationMillis);
 
-    setSound(sound);
     await sound.pauseAsync();
 
     sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
-    setIsLoading(false);
+
+    return sound;
   };
 
   const onPlaybackStatusUpdate = (playbackStatus) => {
     setTimeEllapsed(playbackStatus.positionMillis);
   };
 
-  const playSound = () => {
-    if (!sound) {
+  const playSounds = () => {
+    if (!sounds) {
       return null;
     }
 
-    if (isPlaying) {
-      sound.pauseAsync();
-      setIsPlaying(false);
-    } else {
-      sound.playAsync();
-      setIsPlaying(true);
-    }
+    sounds.forEach((sound) => {
+      if (isPlaying) {
+        sound.pauseAsync();
+        setIsPlaying(false);
+      } else {
+        sound.playAsync();
+        setIsPlaying(true);
+      }
+    });
   };
 
   return (
@@ -83,7 +113,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         ) : (
           <>
             <View style={styles.sliderView}>
-              <TouchableOpacity style={styles.button} onPress={playSound}>
+              <TouchableOpacity style={styles.button} onPress={playSounds}>
                 <FontAwesome6
                   name={isPlaying ? "pause" : "play"}
                   size={24}

@@ -1,6 +1,5 @@
 export async function requestSound(description) {
   do {
-    console.log("loading");
     const response = await fetch(`http://10.30.17.242:3001/post`, {
       method: "POST",
       headers: {
