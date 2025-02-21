@@ -39,7 +39,7 @@ const CameraScreen = ({ route, navigation }) => {
     }
 
     if (cameraRef.current) {
-      let photo = await cameraRef.current.takePictureAsync();
+      let photo = await cameraRef.current.takePictureAsync({ base64: true });
       navigation.navigate("Photo Display Screen", {
         photo,
       });
