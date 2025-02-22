@@ -3,11 +3,19 @@ import CameraScreen from "../screens/CameraScreen";
 import DisplayPhotoScreen from "../screens/DisplayPhotoScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { FontAwesome6 } from "@expo/vector-icons";
+import { useFonts, Karla_300Light, Karla_400Regular, Karla_600SemiBold, Karla_700Bold_Italic } from "@expo-google-fonts/karla";
 import theme from "../theme";
 
 const Stack = createNativeStackNavigator();
 
 export default function HomeScreen() {
+  const [fontsLoaded] = useFonts({
+    KarlaLight: Karla_300Light,
+    KarlaRegular: Karla_400Regular,
+    KarlaSemiBold: Karla_600SemiBold,
+    KarlaBoldItalic: Karla_700Bold_Italic,
+  });
+
   return (
     <Stack.Navigator initialRouteName="Camera Screen">
       <Stack.Screen
