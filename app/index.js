@@ -29,7 +29,7 @@ export default function HomeScreen() {
         name="Photo Display Screen"
         component={DisplayPhotoScreen}
         options={({ navigation }) => ({
-          headerTitle: () => <Text style={styles.displayPageTitle}>Photo</Text>,
+          headerTitle: "",
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <FontAwesome6
@@ -40,6 +40,8 @@ export default function HomeScreen() {
               />
             </TouchableOpacity>
           ),
+          headerTransparent: true,
+          headerStyle: { backgroundColor: "transparent", elevation: 0, shadowOpacity: 0 },
         })}
       />
     </Stack.Navigator>

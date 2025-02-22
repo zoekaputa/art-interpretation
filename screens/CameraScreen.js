@@ -111,10 +111,6 @@ const CameraScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
-      {/* Speech to Text Button */}
-      <View style={styles.micContainer}>
-        <MicButton />
-      </View>
     </View>
   );
 };
@@ -124,17 +120,16 @@ export default CameraScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "start",
+    justifyContent: "flex-start",
     alignItems: "center",
     backgroundColor: theme.colors.white,
     padding: "5%",
-    paddingVertical: "5",
   },
   logo: {
     fontFamily: theme.fonts.karlaLight,
     fontSize: 35,
     fontStyle: "italic",
-    marginBottom: 10,
+    marginBottom: 20,
     color: theme.colors.darkBlue,
     textShadowColor: theme.colors.lightBlue,
     textShadowOffset: { width: 1, height: 1 }, 
@@ -142,7 +137,7 @@ const styles = StyleSheet.create({
   },
   cameraWrapper: {
     width: "100%", 
-    height: "75%",
+    height: "80%",
     borderRadius: 10,
     overflow: "hidden",
     boxShadow: '0px 0px 10px 4px rgba(141, 193, 221, 0.50)',
@@ -204,9 +199,5 @@ const styles = StyleSheet.create({
     color: theme.colors.white,
     textAlign: "center",
     includeFontPadding: false,
-  },
-  micContainer: {
-    alignItems: "center",
-    marginTop: "10%", 
   },
 });
