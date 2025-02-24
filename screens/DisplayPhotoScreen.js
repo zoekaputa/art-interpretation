@@ -65,7 +65,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       setIsLoading(false);
     };
 
-    reqSounds();
+    // reqSounds();
   }, []);
 
   const playDescriptionAudio = async (text) => {
@@ -186,23 +186,25 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
           <>
             <Text style={styles.logo}>artsonix</Text>
             <Text style={styles.directions}>
-              Generating audio for this image...
+              Generating audio for this image
             </Text>
             <ActivityIndicator size="large" />
           </>
         ) : (
           <>
             <Text style={styles.logo}>artsonix</Text>
-            <Image
-              source={{ uri: route.params.photo.uri }}
-              style={[styles.image, { resizeMode: "contain" }]}
-              accessible={true}
-              accessibilityLabel={
-                descriptionText
-                  ? descriptionText
-                  : "Still generative alt text for this image."
-              }
-            />
+            <View style={styles.imageContainer} accessible={true} accessibilityLabel={descriptionText || "Still generating alt text for this image."}>
+              <Image
+                source={{ uri: route.params.photo.uri }}
+                style={[styles.image, { resizeMode: "contain" }]}
+                // accessible={true}
+                // accessibilityLabel={
+                //   descriptionText
+                //     ? descriptionText
+                //     : "Still generating alt text for this image."
+                // }
+              />
+            </View>
             <View style={styles.titleContainer}>
               {/* Title */}
               <Text style={styles.titleText}>Artpiece Name</Text>
@@ -212,13 +214,16 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   name="bookmark"
                   size={24}
                   color={theme.colors.darkBlue}
+                  accessible={true}
+                  accessibilityLabel="Bookmark Audio"
                 />
               </TouchableOpacity>
             </View>
             <View style={styles.sliderContainer}>
               {/* Time and Slider */}
               <View style={styles.timeRow}>
-                <Text style={styles.sliderTime}>
+                <Text style={styles.sliderTime} accessible={true}
+                  accessibilityLabel={`${timeEllapsed} seconds elapsed`}>
                   {formatTime(timeEllapsed)}
                 </Text>
                 <Slider
@@ -231,7 +236,8 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   value={timeEllapsed}
                   onValueChange={seekTo}
                 />
-                <Text style={styles.sliderTime}>{formatTime(duration)}</Text>
+                <Text style={styles.sliderTime} accessible={true}
+                  accessibilityLabel={`${duration} seconds total`}>{formatTime(duration)}</Text>
               </View>
 
               {/* Playback Controls */}
@@ -245,7 +251,8 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                     size={35}
                     color={theme.colors.darkBlue}
                   />
-                  <Text style={styles.controlText}>5</Text>
+                  <Text style={styles.controlText} accessible={true}
+                    accessibilityLabel="Rewind 5 seconds">5</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -266,10 +273,12 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                 >
                   <Feather
                     name="rotate-cw"
+                    
                     size={35}
                     color={theme.colors.darkBlue}
                   />
-                  <Text style={styles.controlText}>5</Text>
+                  <Text style={styles.controlText} accessible={true}
+                    accessibilityLabel="Forward 5 seconds">5</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -304,6 +313,10 @@ const styles = StyleSheet.create({
     textShadowColor: theme.colors.lightBlue,
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
+  },
+  imageContainer: {
+    width: "100%",
+    alignItems: "center",
   },
   image: {
     height: 400,
