@@ -1,21 +1,86 @@
-import React, { useRef, useState } from "react";
-import { View, TouchableOpacity, Animated, Easing } from "react-native";
+import React, { useRef, useState, useReducer, useEffect } from "react";
+import {
+  View,
+  TouchableOpacity,
+  Animated,
+  Easing,
+  Button,
+  Text,
+} from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
+import { Audio } from "expo-av";
 import theme from "../theme"; // Ensure this path is correct
+import { getTranscription } from "../scripts/gpt-request";
 
 const MicButton = () => {
+  const [permissionResponse, requestPermission] = Audio.usePermissions();
   const [isRecording, setIsRecording] = useState(false);
+  const [recording, setRecording] = useState(null);
+
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const opacityAnim = useRef(new Animated.Value(1)).current;
 
-  const startPulsing = () => {
+  async function startRecording() {
+    const recording = new Audio.Recording();
+    try {
+      await recording.prepareToRecordAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+      await recording.startAsync();
+      setRecording(recording);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function stopRecording() {
+    try {
+      await recording.stopAndUnloadAsync();
+      // You are now recording!
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    const setPerm = async () => {
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+    };
+
+    setPerm();
+  }, []);
+
+  if (!permissionResponse || permissionResponse.status !== "granted") {
+    // Camera permissions are not granted yet.
+    const reqPerm = async () => {
+      await requestPermission();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+    };
+    return (
+      <View>
+        <Text style={{ textAlign: "center" }}>
+          We need your permission to use the mic
+        </Text>
+        <Button onPress={reqPerm} title="grant permission" />
+      </View>
+    );
+  }
+
+  const startPulsing = async () => {
+    await startRecording();
     setIsRecording(true);
 
     Animated.loop(
       Animated.parallel([
         Animated.sequence([
           Animated.timing(scaleAnim, {
-            toValue: 2, 
+            toValue: 2,
             duration: 1000,
             easing: Easing.out(Easing.ease),
             useNativeDriver: true,
@@ -43,10 +108,13 @@ const MicButton = () => {
     ).start();
   };
 
-  const stopPulsing = () => {
+  const stopPulsing = async () => {
+    await stopRecording();
     setIsRecording(false);
     scaleAnim.setValue(1);
     opacityAnim.setValue(1);
+    const audioFile = await recording.getURI();
+    getTranscription(audioFile);
   };
 
   return (
@@ -61,8 +129,7 @@ const MicButton = () => {
       )}
       <TouchableOpacity
         style={styles.micButton}
-        onPressIn={startPulsing}
-        onPressOut={stopPulsing}
+        onPress={isRecording ? stopPulsing : startPulsing}
         activeOpacity={0.5}
       >
         <FontAwesome6 name="microphone" size={30} color="#AAD2F7" />

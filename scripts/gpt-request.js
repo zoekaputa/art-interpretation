@@ -6,6 +6,26 @@ const openai = new OpenAI({
   apiKey: process.env.EXPO_PUBLIC_GPT_API_KEY,
 });
 
+export async function getTranscription(audioFile) {
+  try {
+    const readBuffer = await FileSystem.readAsStringAsync(audioFile, {
+      encoding: FileSystem.EncodingType.Base64,
+    });
+    const transcription = await openai.audio.transcriptions.create({
+      file: {
+        url: readBuffer,
+      },
+      model: "whisper-1",
+    });
+
+    console.log(transcription);
+
+    return transcription;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export async function createAudioDescription(text) {
   try {
     const mp3 = await openai.audio.speech.create({
