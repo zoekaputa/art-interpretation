@@ -255,6 +255,8 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                 <TouchableOpacity
                   style={styles.controlButton}
                   onPress={rewind5}
+                  accessible={true}
+                  accessibilityLabel="Rewind 5 seconds"
                 >
                   <Feather
                     name="rotate-ccw"
@@ -279,6 +281,8 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                 <TouchableOpacity
                   style={styles.controlButton}
                   onPress={forward5}
+                  accessible={true}
+                  accessibilityLabel="Forward 5 seconds"
                 >
                   <Feather
                     name="rotate-cw"
@@ -299,7 +303,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   setIsLoading={setIsLoading}
                   image={route.params.photo.base64}
                   accessible={true}
-                  accessibilityLabel="Microphone button. To change one of the audio layers, press this button and explicitly say foreground, middleground, or background in your query."
+                  accessibilityLabel="Microphone button. How would you like to change the audio?"
                 />
               </View>
             </View>
