@@ -207,20 +207,15 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
           <Image
             source={{ uri: route.params.photo.uri }}
             style={[styles.image, { resizeMode: "contain" }]}
-            // accessible={true}
-            // accessibilityLabel={
-            //   descriptionText
-            //     ? descriptionText
-            //     : "Still generating alt text for this image."
-            // }
           />
         </View>
         {isLoading ? (
           <>
             <Text style={styles.directions}>
-              Generating audio for this image
+              Artsonix is generating an audio for your image. The audio will be provided in three layers: the foreground, middleground, and background. 
             </Text>
-            <ActivityIndicator size="large" />
+            <ActivityIndicator size="large" accessible={true}
+                  accessibilityLabel="loading"/>
           </>
         ) : (
           <>
@@ -303,6 +298,8 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   setSoundDescriptions={setSoundDescriptions}
                   setIsLoading={setIsLoading}
                   image={route.params.photo.base64}
+                  accessible={true}
+                  accessibilityLabel="Microphone button. To change one of the audio layers, press this button and explicitly say foreground, middleground, or background in your query."
                 />
               </View>
             </View>
