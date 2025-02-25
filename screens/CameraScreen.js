@@ -7,7 +7,6 @@ import { useRef, useState } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
 import theme from "../theme";
-import MicButton from "../components/MicButton";
 
 /* This component is the Profile Screen */
 const CameraScreen = ({ route, navigation }) => {
@@ -47,22 +46,22 @@ const CameraScreen = ({ route, navigation }) => {
     }
   }
 
-  function toggleCameraFacing() {
-    setFacing((current) => (current === "back" ? "front" : "back"));
-  }
+  // function toggleCameraFacing() {
+  //   setFacing((current) => (current === "back" ? "front" : "back"));
+  // }
 
-  function toggleFlash() {
-    setFlash((current) => {
-      switch (current) {
-        case "off":
-          return "on";
-        case "on":
-          return "auto";
-        case "auto":
-          return "off";
-      }
-    });
-  }
+  // function toggleFlash() {
+  //   setFlash((current) => {
+  //     switch (current) {
+  //       case "off":
+  //         return "on";
+  //       case "on":
+  //         return "auto";
+  //       case "auto":
+  //         return "off";
+  //     }
+  //   });
+  // }
 
   return (
     <View style={styles.container}>
@@ -74,12 +73,14 @@ const CameraScreen = ({ route, navigation }) => {
           style={styles.camera}
           facing={facing}
           flash={flash}
+          accessibilityLabel="Camera View"
+          accessible={true} 
           onCameraReady={() => setIsReady(true)}
         />
 
         {/* Camera Buttons Toolbar */}
         <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={toggleFlash}>
+        {/* <TouchableOpacity style={styles.button} onPress={toggleFlash}>
           {flash === "auto" ? (
             <View style={styles.textContainer}>
               <Text style={styles.text}>A</Text> 
@@ -102,13 +103,14 @@ const CameraScreen = ({ route, navigation }) => {
               )}
             </>
           )}
-        </TouchableOpacity>
-          <TouchableOpacity style={styles.centerButton} onPress={takePicture}>
+        </TouchableOpacity> */}
+          <TouchableOpacity style={styles.centerButton} onPress={takePicture} accessibilityLabel="Take Picture"
+          accessible={true} >
             <FontAwesome6 name="circle" size={75} color="white" solid />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
+          {/* <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
             <FontAwesome6 name="rotate" size={24} color="white" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
     </View>

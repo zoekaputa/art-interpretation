@@ -65,7 +65,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       setIsLoading(false);
     };
 
-    reqSounds();
+    // reqSounds();
   }, []);
 
   useEffect(() => {
@@ -196,37 +196,103 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       keyboardDismissMode="on-drag"
     >
       <View style={styles.container}>
-        <>
-          <Text style={styles.logo}>artsonix</Text>
-          <Image
-            source={{ uri: route.params.photo.uri }}
-            style={[styles.image, { resizeMode: "contain" }]}
-            accessible={true}
-            accessibilityLabel={
-              descriptionText
-                ? descriptionText
-                : "Still generative alt text for this image."
-            }
-          />
-          {isLoading ? (
-            <>
-              <Text style={styles.directions}>
-                Generating audio for this image...
-              </Text>
-              <ActivityIndicator size="large" />
-            </>
-          ) : (
-            <>
-              <View style={styles.titleContainer}>
-                {/* Title */}
-                <Text style={styles.titleText}>Artpiece Name</Text>
-                {/* Bookmark Button on the Right */}
-                <TouchableOpacity>
-                  <FontAwesome6
-                    name="bookmark"
-                    size={24}
+        {isLoading ? (
+          <>
+            <Text style={styles.logo}>artsonix</Text>
+            <Text style={styles.directions}>
+              Generating audio for this image
+            </Text>
+            <ActivityIndicator size="large" />
+          </>
+        ) : (
+          <>
+            <Text style={styles.logo}>artsonix</Text>
+            <View style={styles.imageContainer} accessible={true} accessibilityLabel={descriptionText || "Still generating alt text for this image."}>
+              <Image
+                source={{ uri: route.params.photo.uri }}
+                style={[styles.image, { resizeMode: "contain" }]}
+                // accessible={true}
+                // accessibilityLabel={
+                //   descriptionText
+                //     ? descriptionText
+                //     : "Still generating alt text for this image."
+                // }
+              />
+            </View>
+            <View style={styles.titleContainer}>
+              {/* Title */}
+              <Text style={styles.titleText}>Artpiece Name</Text>
+              {/* Bookmark Button on the Right */}
+              <TouchableOpacity>
+                <FontAwesome6
+                  name="bookmark"
+                  size={24}
+                  color={theme.colors.darkBlue}
+                  accessible={true}
+                  accessibilityLabel="Bookmark Audio"
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.sliderContainer}>
+              {/* Time and Slider */}
+              <View style={styles.timeRow}>
+                <Text style={styles.sliderTime} accessible={true}
+                  accessibilityLabel={`${timeEllapsed} seconds elapsed`}>
+                  {formatTime(timeEllapsed)}
+                </Text>
+                <Slider
+                  style={styles.sliderStyle}
+                  minimumValue={0}
+                  maximumValue={duration}
+                  minimumTrackTintColor={theme.colors.lightBlue}
+                  maximumTrackTintColor={theme.colors.lightGray}
+                  thumbImage={require("../assets/images/medium-thumb.png")}
+                  value={timeEllapsed}
+                  onValueChange={seekTo}
+                />
+                <Text style={styles.sliderTime} accessible={true}
+                  accessibilityLabel={`${duration} seconds total`}>{formatTime(duration)}</Text>
+              </View>
+
+              {/* Playback Controls */}
+              <View style={styles.controlsRow}>
+                <TouchableOpacity
+                  style={styles.controlButton}
+                  onPress={rewind5}
+                >
+                  <Feather
+                    name="rotate-ccw"
+                    size={35}
                     color={theme.colors.darkBlue}
                   />
+                  <Text style={styles.controlText} accessible={true}
+                    accessibilityLabel="Rewind 5 seconds">5</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.playButton}
+                  onPress={playSounds}
+                >
+                  <FontAwesome6
+                    name={isPlaying ? "pause" : "play"}
+                    size={22}
+                    color={theme.colors.darkBlue}
+                    left="2"
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.controlButton}
+                  onPress={forward5}
+                >
+                  <Feather
+                    name="rotate-cw"
+                    
+                    size={35}
+                    color={theme.colors.darkBlue}
+                  />
+                  <Text style={styles.controlText} accessible={true}
+                    accessibilityLabel="Forward 5 seconds">5</Text>
                 </TouchableOpacity>
               </View>
               <View style={styles.sliderContainer}>
@@ -323,6 +389,10 @@ const styles = StyleSheet.create({
     textShadowColor: theme.colors.lightBlue,
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
+  },
+  imageContainer: {
+    width: "100%",
+    alignItems: "center",
   },
   image: {
     height: 400,
