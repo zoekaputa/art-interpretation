@@ -10,9 +10,19 @@ import {
 import { FontAwesome6 } from "@expo/vector-icons";
 import { Audio } from "expo-av";
 import theme from "../theme"; // Ensure this path is correct
-import { getTranscription } from "../scripts/gpt-request";
+import {
+  getTranscription,
+  requestSoundDescriptionUpdate,
+  createAudioDescription,
+} from "../scripts/gpt-request";
 
-const MicButton = () => {
+const MicButton = ({
+  descriptions,
+  sounds,
+  setSounds,
+  reqSound,
+  setSoundDescriptions,
+}) => {
   const [permissionResponse, requestPermission] = Audio.usePermissions();
   const [isRecording, setIsRecording] = useState(false);
   const [recording, setRecording] = useState(null);
@@ -32,6 +42,24 @@ const MicButton = () => {
       console.error(error);
     }
   }
+
+  const playResponseAudio = async (text) => {
+    const audioFile = await createAudioDescription(text);
+
+    try {
+      const sound = new Audio.Sound();
+      await sound.loadAsync(
+        {
+          uri: audioFile,
+        },
+        { shouldPlay: true }
+      );
+
+      await sound.playAsync();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   async function stopRecording() {
     try {
@@ -114,7 +142,26 @@ const MicButton = () => {
     scaleAnim.setValue(1);
     opacityAnim.setValue(1);
     const audioFile = await recording.getURI();
-    getTranscription(audioFile);
+    const transcription = await getTranscription(audioFile);
+    console.log(descriptions);
+    const response = await requestSoundDescriptionUpdate(
+      descriptions,
+      transcription
+    );
+
+    playResponseAudio(response.message);
+
+    const newSounds = await Promise.all(
+      response.descriptions.map(async (desc, i) => {
+        if (desc === descriptions[i]) {
+          return sounds[i];
+        } else {
+          return await reqSound(desc);
+        }
+      })
+    );
+    setSounds(newSounds);
+    setSoundDescriptions(response.descriptions);
   };
 
   return (

@@ -65,8 +65,22 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       setIsLoading(false);
     };
 
-    // reqSounds();
+    reqSounds();
   }, []);
+
+  useEffect(() => {
+    if (!sounds) return;
+
+    const updatePostions = async () => {
+      await Promise.all(
+        sounds.map(async (sound) => {
+          await sound.setPositionAsync(timeEllapsed);
+        })
+      );
+    };
+
+    updatePostions();
+  }, [sounds]);
 
   const playDescriptionAudio = async (text) => {
     const audioFile = await createAudioDescription(text);
@@ -182,103 +196,108 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       keyboardDismissMode="on-drag"
     >
       <View style={styles.container}>
-        {isLoading ? (
-          <>
-            <Text style={styles.logo}>artsonix</Text>
-            <Text style={styles.directions}>
-              Generating audio for this image...
-            </Text>
-            <ActivityIndicator size="large" />
-          </>
-        ) : (
-          <>
-            <Text style={styles.logo}>artsonix</Text>
-            <Image
-              source={{ uri: route.params.photo.uri }}
-              style={[styles.image, { resizeMode: "contain" }]}
-              accessible={true}
-              accessibilityLabel={
-                descriptionText
-                  ? descriptionText
-                  : "Still generative alt text for this image."
-              }
-            />
-            <View style={styles.titleContainer}>
-              {/* Title */}
-              <Text style={styles.titleText}>Artpiece Name</Text>
-              {/* Bookmark Button on the Right */}
-              <TouchableOpacity>
-                <FontAwesome6
-                  name="bookmark"
-                  size={24}
-                  color={theme.colors.darkBlue}
-                />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.sliderContainer}>
-              {/* Time and Slider */}
-              <View style={styles.timeRow}>
-                <Text style={styles.sliderTime}>
-                  {formatTime(timeEllapsed)}
-                </Text>
-                <Slider
-                  style={styles.sliderStyle}
-                  minimumValue={0}
-                  maximumValue={duration}
-                  minimumTrackTintColor={theme.colors.lightBlue}
-                  maximumTrackTintColor={theme.colors.lightGray}
-                  thumbImage={require("../assets/images/medium-thumb.png")}
-                  value={timeEllapsed}
-                  onValueChange={seekTo}
-                />
-                <Text style={styles.sliderTime}>{formatTime(duration)}</Text>
-              </View>
-
-              {/* Playback Controls */}
-              <View style={styles.controlsRow}>
-                <TouchableOpacity
-                  style={styles.controlButton}
-                  onPress={rewind5}
-                >
-                  <Feather
-                    name="rotate-ccw"
-                    size={35}
-                    color={theme.colors.darkBlue}
-                  />
-                  <Text style={styles.controlText}>5</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.playButton}
-                  onPress={playSounds}
-                >
+        <>
+          <Text style={styles.logo}>artsonix</Text>
+          <Image
+            source={{ uri: route.params.photo.uri }}
+            style={[styles.image, { resizeMode: "contain" }]}
+            accessible={true}
+            accessibilityLabel={
+              descriptionText
+                ? descriptionText
+                : "Still generative alt text for this image."
+            }
+          />
+          {isLoading ? (
+            <>
+              <Text style={styles.directions}>
+                Generating audio for this image...
+              </Text>
+              <ActivityIndicator size="large" />
+            </>
+          ) : (
+            <>
+              <View style={styles.titleContainer}>
+                {/* Title */}
+                <Text style={styles.titleText}>Artpiece Name</Text>
+                {/* Bookmark Button on the Right */}
+                <TouchableOpacity>
                   <FontAwesome6
-                    name={isPlaying ? "pause" : "play"}
-                    size={22}
-                    color={theme.colors.darkBlue}
-                    left="2"
-                  />
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.controlButton}
-                  onPress={forward5}
-                >
-                  <Feather
-                    name="rotate-cw"
-                    size={35}
+                    name="bookmark"
+                    size={24}
                     color={theme.colors.darkBlue}
                   />
-                  <Text style={styles.controlText}>5</Text>
                 </TouchableOpacity>
               </View>
-            </View>
-            {/* Speech to Text Button */}
-            <View style={styles.micContainer}>
-              <MicButton />
-            </View>
-          </>
-        )}
+              <View style={styles.sliderContainer}>
+                {/* Time and Slider */}
+                <View style={styles.timeRow}>
+                  <Text style={styles.sliderTime}>
+                    {formatTime(timeEllapsed)}
+                  </Text>
+                  <Slider
+                    style={styles.sliderStyle}
+                    minimumValue={0}
+                    maximumValue={duration}
+                    minimumTrackTintColor={theme.colors.lightBlue}
+                    maximumTrackTintColor={theme.colors.lightGray}
+                    thumbImage={require("../assets/images/medium-thumb.png")}
+                    value={timeEllapsed}
+                    onValueChange={seekTo}
+                  />
+                  <Text style={styles.sliderTime}>{formatTime(duration)}</Text>
+                </View>
+                <View style={styles.controlsRow}>
+                  <TouchableOpacity
+                    style={styles.controlButton}
+                    onPress={rewind5}
+                  >
+                    <Feather
+                      name="rotate-ccw"
+                      size={35}
+                      color={theme.colors.darkBlue}
+                    />
+                    <Text style={styles.controlText}>5</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.playButton}
+                    onPress={playSounds}
+                  >
+                    <FontAwesome6
+                      name={isPlaying ? "pause" : "play"}
+                      size={22}
+                      color={theme.colors.darkBlue}
+                      left="2"
+                    />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.controlButton}
+                    onPress={forward5}
+                  >
+                    <Feather
+                      name="rotate-cw"
+                      size={35}
+                      color={theme.colors.darkBlue}
+                    />
+                    <Text style={styles.controlText}>5</Text>
+                  </TouchableOpacity>
+                </View>
+                {/* Speech to Text Button */}
+                <View style={styles.micContainer}>
+                  <MicButton
+                    descriptions={soundDescriptions}
+                    sounds={sounds}
+                    setSounds={setSounds}
+                    reqSound={reqSound}
+                    setSoundDescriptions={setSoundDescriptions}
+                  />
+                </View>
+              </View>
+            </>
+          )}
+        </>
         {/*route.params.photo.uri*/}
       </View>
     </KeyboardAwareScrollView>

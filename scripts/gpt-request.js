@@ -104,6 +104,52 @@ export async function requestSoundDescriptions(base64Img) {
   }
 }
 
+export async function requestSoundDescriptionUpdate(descriptions, userMessage) {
+  try {
+    const result = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: [
+            {
+              type: "text",
+              text: `Given a picture of a painting, existing descriptions of this painting's forground, middle-ground, and background, and a user message you are an expert in
+                        updating the artwork's descriptions. The user wants to create a soundscape representing the painting using an AI description to sound effect tool. You directly
+                        address the concerns layed out in their message by updating one or more description and giving then a short explanation. In your list of descriptions,
+                        each shopuld be a 3 VERY SIMPLE sound effect description. You return a json of in the form
+                        {
+                          message: <message explaining what you changed. Do not refer to the array of descriptions directly>,
+                          descriptions: [<foreground>,<middle-ground>,<background>]
+                        }
+                          
+                        current descriptions: ${descriptions}`,
+            },
+          ],
+        },
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: `User's message: ${userMessage}`,
+            },
+          ],
+        },
+      ],
+    });
+    const responseText = result.choices[0].message.content;
+    const startIndex = responseText.indexOf("{");
+    const endIndex = responseText.indexOf("}");
+    const cutString = responseText.substring(startIndex, endIndex + 1);
+    const jsonResponse = JSON.parse(cutString);
+
+    return { ...jsonResponse, oldDescriptions: descriptions };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function saveBufferToFile(buffer, fileName) {
   try {
     const base64String = Buffer.from(buffer).toString("base64");
