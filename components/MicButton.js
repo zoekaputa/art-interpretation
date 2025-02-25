@@ -22,6 +22,8 @@ const MicButton = ({
   setSounds,
   reqSound,
   setSoundDescriptions,
+  setIsLoading,
+  image,
 }) => {
   const [permissionResponse, requestPermission] = Audio.usePermissions();
   const [isRecording, setIsRecording] = useState(false);
@@ -137,6 +139,7 @@ const MicButton = ({
   };
 
   const stopPulsing = async () => {
+    setIsLoading(true);
     await stopRecording();
     setIsRecording(false);
     scaleAnim.setValue(1);
@@ -146,22 +149,26 @@ const MicButton = ({
     console.log(descriptions);
     const response = await requestSoundDescriptionUpdate(
       descriptions,
-      transcription
+      transcription,
+      image
     );
-
-    playResponseAudio(response.message);
 
     const newSounds = await Promise.all(
       response.descriptions.map(async (desc, i) => {
         if (desc === descriptions[i]) {
           return sounds[i];
         } else {
+          await sounds[i].unloadAsync();
           return await reqSound(desc);
         }
       })
     );
     setSounds(newSounds);
     setSoundDescriptions(response.descriptions);
+
+    playResponseAudio(response.message);
+
+    setIsLoading(false);
   };
 
   return (
