@@ -303,7 +303,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   setIsLoading={setIsLoading}
                   image={route.params.photo.base64}
                   accessible={true}
-                  accessibilityLabel="Microphone button. How would you like to change the audio?"
+                  accessibilityLabel="Microphone button. How would you like to change the generated audio?"
                 />
               </View>
             </View>
