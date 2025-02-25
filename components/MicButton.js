@@ -186,7 +186,13 @@ const MicButton = ({
         onPress={isRecording ? stopPulsing : startPulsing}
         activeOpacity={0.5}
       >
-        <FontAwesome6 name="microphone" size={30} color="#AAD2F7" />
+        <FontAwesome6
+          name="microphone"
+          size={30}
+          color="#AAD2F7"
+          accessible={true}
+          accessibilityLabel="Microphone button. How would you like to change the generated audio?"
+        />
       </TouchableOpacity>
     </View>
   );
