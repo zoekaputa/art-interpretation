@@ -8,19 +8,32 @@ const openai = new OpenAI({
 
 export async function getTranscription(audioFile) {
   try {
-    const readBuffer = await FileSystem.readAsStringAsync(audioFile, {
-      encoding: FileSystem.EncodingType.Base64,
+    const formData = new FormData();
+    formData.append("file", {
+      uri: audioFile,
+      name: "media",
+      type: "audio/mpeg",
     });
-    const transcription = await openai.audio.transcriptions.create({
-      file: {
-        url: readBuffer,
-      },
-      model: "whisper-1",
-    });
+    formData.append("model", "whisper-1");
 
-    console.log(transcription);
+    console.log("fetching");
+    const response = await fetch(
+      "https://api.openai.com/v1/audio/transcriptions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.EXPO_PUBLIC_GPT_API_KEY}`,
+          "Content-Type": "multipart/form-data",
+        },
+        body: formData,
+      }
+    );
 
-    return transcription;
+    const transcription = await response.json();
+
+    console.log(transcription.text);
+
+    return transcription.text;
   } catch (error) {
     console.log(error);
   }
