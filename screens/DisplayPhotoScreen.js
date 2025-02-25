@@ -68,6 +68,20 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
     reqSounds();
   }, []);
 
+  useEffect(() => {
+    if (!sounds) return;
+
+    const updatePostions = async () => {
+      await Promise.all(
+        sounds.map(async (sound) => {
+          await sound.setPositionAsync(timeEllapsed);
+        })
+      );
+    };
+
+    updatePostions();
+  }, [sounds]);
+
   const playDescriptionAudio = async (text) => {
     const audioFile = await createAudioDescription(text);
 
@@ -182,9 +196,27 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       keyboardDismissMode="on-drag"
     >
       <View style={styles.container}>
+        <Text style={styles.logo}>artsonix</Text>
+        <View
+          style={styles.imageContainer}
+          accessible={true}
+          accessibilityLabel={
+            descriptionText || "Still generating alt text for this image."
+          }
+        >
+          <Image
+            source={{ uri: route.params.photo.uri }}
+            style={[styles.image, { resizeMode: "contain" }]}
+            // accessible={true}
+            // accessibilityLabel={
+            //   descriptionText
+            //     ? descriptionText
+            //     : "Still generating alt text for this image."
+            // }
+          />
+        </View>
         {isLoading ? (
           <>
-            <Text style={styles.logo}>artsonix</Text>
             <Text style={styles.directions}>
               Generating audio for this image
             </Text>
@@ -192,19 +224,6 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
           </>
         ) : (
           <>
-            <Text style={styles.logo}>artsonix</Text>
-            <View style={styles.imageContainer} accessible={true} accessibilityLabel={descriptionText || "Still generating alt text for this image."}>
-              <Image
-                source={{ uri: route.params.photo.uri }}
-                style={[styles.image, { resizeMode: "contain" }]}
-                // accessible={true}
-                // accessibilityLabel={
-                //   descriptionText
-                //     ? descriptionText
-                //     : "Still generating alt text for this image."
-                // }
-              />
-            </View>
             <View style={styles.titleContainer}>
               {/* Title */}
               <Text style={styles.titleText}>Artpiece Name</Text>
@@ -222,8 +241,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
             <View style={styles.sliderContainer}>
               {/* Time and Slider */}
               <View style={styles.timeRow}>
-                <Text style={styles.sliderTime} accessible={true}
-                  accessibilityLabel={`${timeEllapsed} seconds elapsed`}>
+                <Text style={styles.sliderTime}>
                   {formatTime(timeEllapsed)}
                 </Text>
                 <Slider
@@ -236,11 +254,8 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   value={timeEllapsed}
                   onValueChange={seekTo}
                 />
-                <Text style={styles.sliderTime} accessible={true}
-                  accessibilityLabel={`${duration} seconds total`}>{formatTime(duration)}</Text>
+                <Text style={styles.sliderTime}>{formatTime(duration)}</Text>
               </View>
-
-              {/* Playback Controls */}
               <View style={styles.controlsRow}>
                 <TouchableOpacity
                   style={styles.controlButton}
@@ -251,8 +266,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                     size={35}
                     color={theme.colors.darkBlue}
                   />
-                  <Text style={styles.controlText} accessible={true}
-                    accessibilityLabel="Rewind 5 seconds">5</Text>
+                  <Text style={styles.controlText}>5</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -273,18 +287,24 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                 >
                   <Feather
                     name="rotate-cw"
-                    
                     size={35}
                     color={theme.colors.darkBlue}
                   />
-                  <Text style={styles.controlText} accessible={true}
-                    accessibilityLabel="Forward 5 seconds">5</Text>
+                  <Text style={styles.controlText}>5</Text>
                 </TouchableOpacity>
               </View>
-            </View>
-            {/* Speech to Text Button */}
-            <View style={styles.micContainer}>
-              <MicButton />
+              {/* Speech to Text Button */}
+              <View style={styles.micContainer}>
+                <MicButton
+                  descriptions={soundDescriptions}
+                  sounds={sounds}
+                  setSounds={setSounds}
+                  reqSound={reqSound}
+                  setSoundDescriptions={setSoundDescriptions}
+                  setIsLoading={setIsLoading}
+                  image={route.params.photo.base64}
+                />
+              </View>
             </View>
           </>
         )}
@@ -328,6 +348,7 @@ const styles = StyleSheet.create({
   },
   directions: {
     fontFamily: theme.fonts.karlaSemiBold,
+    marginTop: 32,
     textAlign: "center",
     fontSize: 16,
     padding: "5%",
