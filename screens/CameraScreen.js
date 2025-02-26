@@ -46,23 +46,6 @@ const CameraScreen = ({ route, navigation }) => {
     }
   }
 
-  // function toggleCameraFacing() {
-  //   setFacing((current) => (current === "back" ? "front" : "back"));
-  // }
-
-  // function toggleFlash() {
-  //   setFlash((current) => {
-  //     switch (current) {
-  //       case "off":
-  //         return "on";
-  //       case "on":
-  //         return "auto";
-  //       case "auto":
-  //         return "off";
-  //     }
-  //   });
-  // }
-
   return (
     <View style={styles.container}>
       <Text style={styles.logo}>artsonix</Text>
@@ -80,37 +63,10 @@ const CameraScreen = ({ route, navigation }) => {
 
         {/* Camera Buttons Toolbar */}
         <View style={styles.buttonContainer}>
-        {/* <TouchableOpacity style={styles.button} onPress={toggleFlash}>
-          {flash === "auto" ? (
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>A</Text> 
-            </View>
-            
-          ) : (
-            <>
-              <FontAwesome6
-                name="bolt"
-                size={24}
-                color={flash === "off" ? theme.colors.white : theme.colors.yellow}
-              />
-              {flash === "off" && (
-                <FontAwesome6
-                  style={styles.slash}
-                  name="slash"
-                  size={24}
-                  color={theme.colors.white}
-                />
-              )}
-            </>
-          )}
-        </TouchableOpacity> */}
           <TouchableOpacity style={styles.centerButton} onPress={takePicture} accessibilityLabel="Take Picture"
           accessible={true} >
             <FontAwesome6 name="circle" size={75} color="white" solid />
           </TouchableOpacity>
-          {/* <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-            <FontAwesome6 name="rotate" size={24} color="white" />
-          </TouchableOpacity> */}
         </View>
       </View>
     </View>
@@ -160,19 +116,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     paddingVertical: 20,
   },
-  button: {
-    justifyContent: "center",
-    alignItems: "center",
-    borderColor: theme.colors.white,
-    borderWidth: 1,
-    width: 60,  
-    height: 60, 
-    padding: 16,
-    borderRadius: 50,
-    margin: "auto",
-    flexDirection: "row",
-    gap: 5,
-  },
   centerButton: {
     alignSelf: "flex-end",
     alignItems: "center",
@@ -181,13 +124,6 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 50,
     margin: "auto",
-  },
-  slash: {
-    position: "absolute",
-    top: 18,
-    left: 15,
-    zIndex: 1,
-    fontSize: 20,
   },
   textContainer: {
     width: 50,  

@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Audio } from "expo-av";
-import Slider from "@react-native-community/slider";
 import { FontAwesome6, Feather } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { requestSound } from "../scripts/request-server";
@@ -65,7 +64,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       setIsLoading(false);
     };
 
-    reqSounds();
+    // reqSounds();
   }, []);
 
   useEffect(() => {
@@ -222,78 +221,11 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
             <View style={styles.titleContainer}>
               {/* Title */}
               <Text style={styles.titleText}>Artpiece Name</Text>
-              {/* Bookmark Button on the Right */}
-              <TouchableOpacity>
-                <FontAwesome6
-                  name="bookmark"
-                  size={24}
-                  color={theme.colors.darkBlue}
-                  accessible={true}
-                  accessibilityLabel="Bookmark Audio"
-                />
-              </TouchableOpacity>
             </View>
-            <View style={styles.sliderContainer}>
-              {/* Time and Slider */}
-              <View style={styles.timeRow}>
-                <Text style={styles.sliderTime}>
-                  {formatTime(timeEllapsed)}
-                </Text>
-                <Slider
-                  style={styles.sliderStyle}
-                  minimumValue={0}
-                  maximumValue={duration}
-                  minimumTrackTintColor={theme.colors.lightBlue}
-                  maximumTrackTintColor={theme.colors.lightGray}
-                  thumbImage={require("../assets/images/medium-thumb.png")}
-                  value={timeEllapsed}
-                  onValueChange={seekTo}
-                />
-                <Text style={styles.sliderTime}>{formatTime(duration)}</Text>
-              </View>
-              <View style={styles.controlsRow}>
-                <TouchableOpacity
-                  style={styles.controlButton}
-                  onPress={rewind5}
-                  accessible={true}
-                  accessibilityLabel="Rewind 5 seconds"
-                >
-                  <Feather
-                    name="rotate-ccw"
-                    size={35}
-                    color={theme.colors.darkBlue}
-                  />
-                  <Text style={styles.controlText}>5</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.playButton}
-                  onPress={playSounds}
-                >
-                  <FontAwesome6
-                    name={isPlaying ? "pause" : "play"}
-                    size={22}
-                    color={theme.colors.darkBlue}
-                    left="2"
-                  />
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.controlButton}
-                  onPress={forward5}
-                  accessible={true}
-                  accessibilityLabel="Forward 5 seconds"
-                >
-                  <Feather
-                    name="rotate-cw"
-                    size={35}
-                    color={theme.colors.darkBlue}
-                  />
-                  <Text style={styles.controlText}>5</Text>
-                </TouchableOpacity>
-              </View>
-              {/* Speech to Text Button */}
-              <View style={styles.micContainer}>
+            {/* Buttons */}
+            <View style={styles.controlsRow}>
+              <View style={styles.controlButton}>
+                {/* Speech to Text Button */}
                 <MicButton
                   descriptions={soundDescriptions}
                   sounds={sounds}
@@ -305,6 +237,28 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   accessible={true}
                   accessibilityLabel="Microphone button. How would you like to change the generated audio?"
                 />
+              </View>
+              <TouchableOpacity
+                style={styles.playButton}
+                onPress={playSounds}
+              >
+                <FontAwesome6
+                  name={isPlaying ? "pause" : "play"}
+                  size={22}
+                  color={theme.colors.darkBlue}
+                  left="2"
+                />
+              </TouchableOpacity>
+              <View style={styles.controlButton}>
+                <TouchableOpacity>
+                  <FontAwesome6
+                    name="bookmark"
+                    size={32}
+                    color={theme.colors.darkBlue}
+                    accessible={true}
+                    accessibilityLabel="Bookmark Audio"
+                  />
+                </TouchableOpacity>
               </View>
             </View>
           </>
@@ -329,18 +283,18 @@ const styles = StyleSheet.create({
     fontFamily: theme.fonts.karlaLight,
     fontSize: 35,
     fontStyle: "italic",
-    marginBottom: 20,
+    marginBottom: "15%",
     color: theme.colors.darkBlue,
     textShadowColor: theme.colors.lightBlue,
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
   },
   imageContainer: {
-    width: "100%",
+    width: "80%",
     alignItems: "center",
   },
   image: {
-    height: 400,
+    height: 300,
     borderRadius: 8,
     width: "90%",
     borderRadius: 10,
@@ -356,38 +310,20 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     flexDirection: "row",
-    width: "90%",
-    padding: "2%",
-    marginTop: 10,
-    justifyContent: "space-between",
+    width: "100%",
+    padding: "15%",
+    margin: "5%",
+    justifyContent: "center",
   },
   titleText: {
     fontFamily: theme.fonts.karlaLight,
     fontSize: 25,
   },
-  sliderContainer: {
-    alignItems: "center",
-    width: "100%",
-    padding: "2%",
-  },
-  timeRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "90%",
-    justifyContent: "space-between",
-  },
-  sliderStyle: {
-    flex: 1,
-    marginHorizontal: 10,
-  },
-  sliderTime: {
-    fontSize: 14,
-    color: theme.colors.darkBlue,
-  },
   controlsRow: {
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    width: "100%",
+    paddingHorizontal: "10%",
+    justifyContent: "space-between",
   },
   controlButton: {
     width: 50,
