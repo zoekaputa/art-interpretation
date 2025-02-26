@@ -1,6 +1,6 @@
 export async function requestSound(description) {
   do {
-    const response = await fetch(`http://10.30.22.59:3001/post`, {
+    const response = await fetch(`http://10.34.75.137:3001/post`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
