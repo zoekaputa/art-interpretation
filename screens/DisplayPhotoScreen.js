@@ -26,7 +26,6 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [timeEllapsed, setTimeEllapsed] = useState(0);
   const [duration, setDuration] = useState(-1);
-  const [loadingSound, setLoadingSound] = useState(null);
   const descriptionText = !soundDescriptions
     ? null
     : `In the foreground of the art, there is ${soundDescriptions[0]}. In the middle-ground, there is ${soundDescriptions[1]}. And the background has ${soundDescriptions[2]}. Please wait while Mosaic generates your soundscape.`;
@@ -35,9 +34,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
     const reqSounds = async () => {
       setIsLoading(true);
 
-      playLoadingSound();
-
-      console.log("test1");
+      const loadingSound = await playLoadingSound();
 
       await Audio.setAudioModeAsync({
         staysActiveInBackground: true,
@@ -49,13 +46,10 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         playsInSilentModeIOS: true,
       });
 
-      console.log("test2");
-
       const descriptions = await requestSoundDescriptions(
         route.params.photo.base64
       );
 
-      console.log("test");
       console.log(descriptions);
       setSoundDescriptions(descriptions);
 
@@ -69,16 +63,14 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         })
       );
 
+      await stopLoadingSound(loadingSound);
+
       setSounds(newSounds);
-      console.log({newSounds})
+
+      setIsLoading(false);
     };
 
-    reqSounds()
-    .catch((err) => console.error("reqSounds failed:", err))
-    .finally(() => {
-      stopLoadingSound();
-      setIsLoading(false);
-    });
+    reqSounds();
   }, []);
 
   useEffect(() => {
@@ -105,17 +97,20 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         isLooping: true,
         volume: 0.5,
       });
-      setLoadingSound(sound);
+      return sound;
     } catch (error) {
       console.error("Error playing loading sound:", error);
     }
   };
 
-  const stopLoadingSound = async () => {
-    if (loadingSound) {
-      await loadingSound.stopAsync();
-      await loadingSound.unloadAsync();
-      setLoadingSound(null);
+  const stopLoadingSound = async (loadingSound) => {
+    try {
+      if (loadingSound) {
+        await loadingSound.pauseAsync();
+        await loadingSound.unloadAsync();
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
