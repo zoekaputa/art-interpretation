@@ -33,6 +33,8 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
     const reqSounds = async () => {
       setIsLoading(true);
 
+      console.log("test1");
+
       await Audio.setAudioModeAsync({
         staysActiveInBackground: true,
         interruptionModeAndroid: 1,
@@ -42,10 +44,14 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         interruptionModeIOS: 0,
         playsInSilentModeIOS: true,
       });
+
+      console.log("test2");
+
       const descriptions = await requestSoundDescriptions(
         route.params.photo.base64
       );
 
+      console.log("test");
       console.log(descriptions);
       setSoundDescriptions(descriptions);
 
@@ -60,16 +66,11 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       );
 
       setSounds(newSounds);
-      useEffect(() => {
-        if (sounds && sounds.length > 0) {
-          playSounds();
-        }
-      }, [sounds]);
 
       setIsLoading(false);
     };
 
-    // reqSounds();
+    reqSounds();
   }, []);
 
   useEffect(() => {
@@ -81,6 +82,8 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
           await sound.setPositionAsync(timeEllapsed);
         })
       );
+
+      await playSounds();
     };
 
     updatePostions();

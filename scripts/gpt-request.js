@@ -114,7 +114,9 @@ export async function requestSoundDescriptions(base64Img) {
         },
       ],
     });
+    console.log("result", result);
     const responseText = result.choices[0].message.content;
+    console.log("responseText", responseText);
     const startIndex = responseText.indexOf("{");
     const endIndex = responseText.indexOf("}");
     const cutString = responseText.substring(startIndex, endIndex + 1);
@@ -176,6 +178,42 @@ export async function requestSoundDescriptionUpdate(
     const jsonResponse = JSON.parse(cutString);
 
     return { ...jsonResponse, oldDescriptions: descriptions };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function containsArtwork(base64Img) {
+  try {
+    const result = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: [
+            {
+              type: "text",
+              text: "You are an expert at determining if there is an artwork in images. Given the included image, respond 'true' if the image includes an artwork and 'false' if not.",
+            },
+          ],
+        },
+        {
+          role: "user",
+          content: [
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:image/jpeg;base64,${base64Img}`,
+                detail: "high",
+              },
+            },
+          ],
+        },
+      ],
+    });
+    const responseText = result.choices[0].message.content;
+    console.log(responseText);
+    return responseText;
   } catch (error) {
     console.log(error);
   }

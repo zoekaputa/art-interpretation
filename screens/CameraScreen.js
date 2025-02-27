@@ -3,8 +3,15 @@ import {
   useCameraPermissions,
   takePictureAsync,
 } from "expo-camera";
-import { useRef, useState } from "react";
-import { Button, StyleSheet, Text, TouchableOpacity, View, Modal } from "react-native";
+import { useRef, useState, useEffect } from "react";
+import {
+  Button,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Modal,
+} from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
 import theme from "../theme";
 import { containsArtwork } from "../scripts/gpt-request";
@@ -17,6 +24,18 @@ const CameraScreen = ({ route, navigation }) => {
   const [isReady, setIsReady] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(true);
   const cameraRef = useRef(null);
+
+  /* useEffect(() => {
+    if (!isReady) {
+      return;
+    }
+
+    const startChecking = () => {
+      const intervalId = setInterval(checkContainsArtwork, 5000); // 5 seconds
+    };
+
+    setTimeout(startChecking, 5000); // 5 seconds
+  }, [isReady]); */
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -36,23 +55,18 @@ const CameraScreen = ({ route, navigation }) => {
   }
 
   async function checkContainsArtwork() {
-    const contains = await containsArtwork();
-  }
-
-  useEffect(() => {
-    // TODO components a bit hacky
-    const startInference = () => {
-      const intervalId = setInterval(send_data, 30000); // 30 seconds
-    };
-
-    setTimeout(startInference, 5000); // 5 seconds
-  }, []);
-
-  async function takePicture() {
-    if (!isReady) {
+    console.log("checking");
+    if (!isReady || !cameraRef.current) {
       return;
     }
 
+    let photo = await cameraRef.current.takePictureAsync({ base64: true });
+
+    const contains = await containsArtwork(photo.base64);
+    console.log(contains);
+  }
+
+  async function takePicture() {
     if (cameraRef.current) {
       let photo = await cameraRef.current.takePictureAsync({ base64: true });
       navigation.navigate("Photo Display Screen", {
@@ -68,7 +82,12 @@ const CameraScreen = ({ route, navigation }) => {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalText}>
-              Welcome to Artsonix! Experience realism through sound with Artsonix. Simply take a picture of your artwork, and Artsonix will generate a detailed description and an immersive soundscape that brings your art to life. You can then record your own requests—like 'add chirping birds'—to adjust the audio and shape it to match your mental image of the piece.
+              Welcome to Artsonix! Experience realism through sound with
+              Artsonix. Simply take a picture of your artwork, and Artsonix will
+              generate a detailed description and an immersive soundscape that
+              brings your art to life. You can then record your own
+              requests—like 'add chirping birds'—to adjust the audio and shape
+              it to match your mental image of the piece.
             </Text>
             <Button title="Continue" onPress={() => setIsModalVisible(false)} />
           </View>
