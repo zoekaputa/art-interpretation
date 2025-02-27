@@ -201,7 +201,7 @@ export async function containsArtwork(base64Img) {
           content: [
             {
               type: "text",
-              text: "You are an expert at determining if there is an artwork in images. Given the included image, respond 'true' if the image includes an artwork and 'false' if not.",
+              text: "You are an expert at determining if there is an artwork in images. Given the included image, respond 'true' if the image includes an artwork and 'false' if not. You do not captalize the response",
             },
           ],
         },
@@ -220,7 +220,6 @@ export async function containsArtwork(base64Img) {
       ],
     });
     const responseText = result.choices[0].message.content;
-    console.log(responseText);
     return responseText;
   } catch (error) {
     console.log(error);

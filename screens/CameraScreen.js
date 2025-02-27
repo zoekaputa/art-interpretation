@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   View,
   Modal,
+  AccessibilityInfo,
 } from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
 import theme from "../theme";
@@ -22,20 +23,23 @@ const CameraScreen = ({ route, navigation }) => {
   const [facing, setFacing] = useState("back");
   const [flash, setFlash] = useState("auto");
   const [isReady, setIsReady] = useState(false);
+  const [photoDisabled, setPhotoDisabled] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(true);
+  const [intervalId, setIntervalId] = useState(null);
   const cameraRef = useRef(null);
 
-  /* useEffect(() => {
+  useEffect(() => {
     if (!isReady) {
       return;
     }
 
     const startChecking = () => {
-      const intervalId = setInterval(checkContainsArtwork, 5000); // 5 seconds
+      const intervalId = setInterval(checkContainsArtwork, 10000); // 10 seconds
+      setIntervalId(intervalId);
     };
 
-    setTimeout(startChecking, 5000); // 5 seconds
-  }, [isReady]); */
+    setTimeout(startChecking);
+  }, [isReady]);
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -55,7 +59,6 @@ const CameraScreen = ({ route, navigation }) => {
   }
 
   async function checkContainsArtwork() {
-    console.log("checking");
     if (!isReady || !cameraRef.current) {
       return;
     }
@@ -63,11 +66,18 @@ const CameraScreen = ({ route, navigation }) => {
     let photo = await cameraRef.current.takePictureAsync({ base64: true });
 
     const contains = await containsArtwork(photo.base64);
-    console.log(contains);
+    // console.log(contains, contains === "true");
+    if (contains === "true") {
+      AccessibilityInfo.announceForAccessibility(
+        "Artwork detected, use the camera button to take a picture."
+      );
+    }
+    setPhotoDisabled(!(contains === "true"));
   }
 
   async function takePicture() {
     if (cameraRef.current) {
+      clearInterval(intervalId);
       let photo = await cameraRef.current.takePictureAsync({ base64: true });
       navigation.navigate("Photo Display Screen", {
         photo,
@@ -98,6 +108,7 @@ const CameraScreen = ({ route, navigation }) => {
         {/* Camera */}
         <CameraView
           ref={cameraRef}
+          animateShutter={false}
           style={styles.camera}
           facing={facing}
           flash={flash}
@@ -111,7 +122,12 @@ const CameraScreen = ({ route, navigation }) => {
           <TouchableOpacity
             style={styles.centerButton}
             onPress={takePicture}
-            accessibilityLabel="Take Picture"
+            disabled={photoDisabled}
+            accessibilityLabel={
+              photoDisabled
+                ? "Camera Button. No artwork detected, camera disabled."
+                : "Camera Button. Artwork detected, take picture."
+            }
             accessible={true}
           >
             <FontAwesome6 name="circle" size={75} color="white" solid />
@@ -151,6 +167,7 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
+    color: theme.colors.darkBlue,
   },
   buttonContainer: {
     position: "absolute",
