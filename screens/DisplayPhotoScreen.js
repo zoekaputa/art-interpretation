@@ -15,6 +15,7 @@ import theme from "../theme";
 import {
   requestSoundDescriptions,
   createAudioDescription,
+  uploadUrlToDevice,
 } from "../scripts/gpt-request";
 import MicButton from "../components/MicButton";
 
@@ -110,10 +111,11 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
   const reqSound = async (desc) => {
     const soundUrl = await requestSound(desc);
     console.log(desc, ":", soundUrl);
+    const localFileUri = await uploadUrlToDevice(soundUrl);
     const sound = new Audio.Sound();
     await sound.loadAsync(
       {
-        uri: soundUrl,
+        uri: localFileUri,
       },
       { shouldPlay: true }
     );

@@ -1,10 +1,18 @@
 import OpenAI from "openai";
 import { Buffer } from "buffer";
 import * as FileSystem from "expo-file-system";
+import axios from "axios";
 
 const openai = new OpenAI({
   apiKey: process.env.EXPO_PUBLIC_GPT_API_KEY,
 });
+
+export async function uploadUrlToDevice(url) {
+  const response = await axios.get(url, { responseType: "arraybuffer" });
+  const buffer = Buffer.from(response.data, "utf-8");
+  const fileUri = await saveBufferToFile(buffer, "myfile.mp4");
+  return fileUri;
+}
 
 export async function getTranscription(audioFile) {
   try {
