@@ -38,7 +38,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         interruptionModeAndroid: 1,
         shouldDuckAndroid: true,
         playThroughEarpieceAndroid: true,
-        allowsRecordingIOS: true,
+        allowsRecordingIOS: false,
         interruptionModeIOS: 0,
         playsInSilentModeIOS: true,
       });
@@ -241,10 +241,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   image={route.params.photo.base64}
                 />
               </View>
-              <TouchableOpacity
-                style={styles.playButton}
-                onPress={playSounds}
-              >
+              <TouchableOpacity style={styles.playButton} onPress={playSounds}>
                 <FontAwesome6
                   name={isPlaying ? "pause" : "play"}
                   size={22}

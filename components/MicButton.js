@@ -75,7 +75,7 @@ const MicButton = ({
   useEffect(() => {
     const setPerm = async () => {
       await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
+        allowsRecordingIOS: false,
         playsInSilentModeIOS: true,
       });
     };
@@ -88,7 +88,7 @@ const MicButton = ({
     const reqPerm = async () => {
       await requestPermission();
       await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
+        allowsRecordingIOS: false,
         playsInSilentModeIOS: true,
       });
     };
@@ -103,6 +103,10 @@ const MicButton = ({
   }
 
   const startPulsing = async () => {
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: true,
+    });
+
     await startRecording();
     setIsRecording(true);
 
@@ -165,6 +169,10 @@ const MicButton = ({
     );
     setSounds(newSounds);
     setSoundDescriptions(response.descriptions);
+
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: false,
+    });
 
     playResponseAudio(response.message);
 
