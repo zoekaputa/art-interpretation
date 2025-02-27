@@ -26,13 +26,16 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [timeEllapsed, setTimeEllapsed] = useState(0);
   const [duration, setDuration] = useState(-1);
+  const [loadingSound, setLoadingSound] = useState(null);
   const descriptionText = !soundDescriptions
     ? null
-    : `In the foreground of the art, there is ${soundDescriptions[0]}. In the middle-ground, there is ${soundDescriptions[1]}. And the background has ${soundDescriptions[2]}.`;
+    : `In the foreground of the art, there is ${soundDescriptions[0]}. In the middle-ground, there is ${soundDescriptions[1]}. And the background has ${soundDescriptions[2]}. Please wait while Mosaic generates your soundscape.`;
 
   useEffect(() => {
     const reqSounds = async () => {
       setIsLoading(true);
+
+      playLoadingSound();
 
       console.log("test1");
 
@@ -67,11 +70,15 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       );
 
       setSounds(newSounds);
-
-      setIsLoading(false);
+      console.log({newSounds})
     };
 
-    reqSounds();
+    reqSounds()
+    .catch((err) => console.error("reqSounds failed:", err))
+    .finally(() => {
+      stopLoadingSound();
+      setIsLoading(false);
+    });
   }, []);
 
   useEffect(() => {
@@ -89,6 +96,28 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
 
     updatePostions();
   }, [sounds]);
+
+  const playLoadingSound = async () => {
+    try {
+      const sound = new Audio.Sound();
+      await sound.loadAsync(require("../assets/loading-sound.mp3"), {
+        shouldPlay: true,
+        isLooping: true,
+        volume: 0.5,
+      });
+      setLoadingSound(sound);
+    } catch (error) {
+      console.error("Error playing loading sound:", error);
+    }
+  };
+
+  const stopLoadingSound = async () => {
+    if (loadingSound) {
+      await loadingSound.stopAsync();
+      await loadingSound.unloadAsync();
+      setLoadingSound(null);
+    }
+  };
 
   const playDescriptionAudio = async (text) => {
     const audioFile = await createAudioDescription(text);
@@ -220,9 +249,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         {isLoading ? (
           <>
             <Text style={styles.directions}>
-              Artsonix is generating an audio for your image. The audio will be
-              provided in three layers: the foreground, middleground, and
-              background.
+              Artsonix is generating an audio for your image.
             </Text>
             <ActivityIndicator
               size="large"
