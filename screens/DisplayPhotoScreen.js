@@ -60,6 +60,11 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       );
 
       setSounds(newSounds);
+      useEffect(() => {
+        if (sounds && sounds.length > 0) {
+          playSounds();
+        }
+      }, [sounds]);
 
       setIsLoading(false);
     };
@@ -195,7 +200,6 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       keyboardDismissMode="on-drag"
     >
       <View style={styles.container}>
-        <Text style={styles.logo}>artsonix</Text>
         <View
           style={styles.imageContainer}
           accessible={true}
@@ -278,16 +282,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: theme.colors.white,
     padding: "5%",
-  },
-  logo: {
-    fontFamily: theme.fonts.karlaLight,
-    fontSize: 35,
-    fontStyle: "italic",
-    marginBottom: "15%",
-    color: theme.colors.darkBlue,
-    textShadowColor: theme.colors.lightBlue,
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
   },
   imageContainer: {
     width: "80%",
