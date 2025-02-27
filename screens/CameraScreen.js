@@ -4,7 +4,7 @@ import {
   takePictureAsync,
 } from "expo-camera";
 import { useRef, useState } from "react";
-import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Button, StyleSheet, Text, TouchableOpacity, View, Modal } from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
 import theme from "../theme";
 import { containsArtwork } from "../scripts/gpt-request";
@@ -15,6 +15,7 @@ const CameraScreen = ({ route, navigation }) => {
   const [facing, setFacing] = useState("back");
   const [flash, setFlash] = useState("auto");
   const [isReady, setIsReady] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(true);
   const cameraRef = useRef(null);
 
   if (!permission) {
@@ -62,6 +63,17 @@ const CameraScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+      {/* Modal for first-time opening */}
+      <Modal visible={isModalVisible} transparent={true} animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalText}>
+              Welcome to Artsonix! Experience realism through sound with Artsonix. Simply take a picture of your artwork, and Artsonix will generate a detailed description and an immersive soundscape that brings your art to life. You can then record your own requests—like 'add chirping birds'—to adjust the audio and shape it to match your mental image of the piece.
+            </Text>
+            <Button title="Continue" onPress={() => setIsModalVisible(false)} />
+          </View>
+        </View>
+      </Modal>
       <Text style={styles.logo}>artsonix</Text>
       <View style={styles.cameraWrapper}>
         {/* Camera */}
@@ -155,5 +167,27 @@ const styles = StyleSheet.create({
     color: theme.colors.white,
     textAlign: "center",
     includeFontPadding: false,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContainer: {
+    width: "80%",
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+  modalText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 20,
   },
 });
