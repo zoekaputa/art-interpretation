@@ -60,6 +60,11 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       );
 
       setSounds(newSounds);
+      useEffect(() => {
+        if (sounds && sounds.length > 0) {
+          playSounds();
+        }
+      }, [sounds]);
 
       setIsLoading(false);
     };
