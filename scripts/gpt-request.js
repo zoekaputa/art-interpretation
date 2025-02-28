@@ -226,6 +226,75 @@ export async function containsArtwork(base64Img) {
   }
 }
 
+export async function getTitle(base64Img) {
+  try {
+    const result = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: "Come up with a five or less word descriptive name for the painting in this image.",
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:image/jpeg;base64,${base64Img}`,
+                detail: "high",
+              },
+            },
+          ],
+        },
+      ],
+    });
+    const responseText = result.choices[0].message.content;
+    return responseText;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getAltText(base64Img) {
+  try {
+    const result = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: [
+            {
+              type: "text",
+              text: "You are an expert at coming up with short alt text descirptions for paintings. You focus on the visuals in the scene.",
+            },
+          ],
+        },
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: "Give me a short alt text description of the painting in this image.",
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:image/jpeg;base64,${base64Img}`,
+                detail: "high",
+              },
+            },
+          ],
+        },
+      ],
+    });
+    const responseText = result.choices[0].message.content;
+    return responseText;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function saveBufferToFile(buffer, fileName) {
   try {
     const base64String = Buffer.from(buffer).toString("base64");
