@@ -20,8 +20,11 @@ import {
   getTitle,
 } from "../scripts/gpt-request";
 import MicButton from "../components/MicButton";
+import { useBookmarks } from "./BookmarkContext";
 
 const DisplayPhotoScreen = ({ route, navigation }) => {
+  const { addBookmark } = useBookmarks();
+  const [isBookmarked, setIsBookmarked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [sounds, setSounds] = useState(null);
   const [soundDescriptions, setSoundDescriptions] = useState(null);
@@ -29,6 +32,17 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
   const [timeEllapsed, setTimeEllapsed] = useState(0);
   const [descriptionText, setDescriptionText] = useState(null);
   const [artName, setArtName] = useState(null);
+
+  const handleBookmark = () => {
+    const newBookmark = {
+      image: route.params.photo.uri,
+      audio: sounds ? sounds[0] : null,
+      name: artName,
+    };
+
+    addBookmark(newBookmark);
+    setIsBookmarked(true);
+  };
 
   useEffect(() => {
     const reqSounds = async () => {
@@ -77,7 +91,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       setIsLoading(false);
     };
 
-    // reqSounds();
+    //reqSounds();
   }, []);
 
   useEffect(() => {
@@ -246,20 +260,20 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                 />
               </TouchableOpacity>
               <View style={styles.controlButton}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={handleBookmark}>
                   <FontAwesome6
-                    name="bookmark"
+                    name={isBookmarked ? "bookmark" : "bookmark"}
                     size={32}
                     color={theme.colors.darkBlue}
                     accessible={true}
-                    accessibilityLabel="Bookmark Audio"
+                    accessibilityLabel="Add to Gallery"
                   />
                 </TouchableOpacity>
               </View>
             </View>
           </>
         )}
-        {/*route.params.photo.uri*/}
+        
       </View>
     </KeyboardAwareScrollView>
   );

@@ -1,37 +1,48 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Text,
   StyleSheet,
   Image,
   View,
-  ActivityIndicator,
+  FlatList,
   TouchableOpacity,
 } from "react-native";
 import { Audio } from "expo-av";
-import { FontAwesome6, Feather } from "@expo/vector-icons";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { requestSound } from "../scripts/request-server";
 import theme from "../theme";
-import {
-  requestSoundDescriptions,
-  createAudioDescription,
-  uploadUrlToDevice,
-  getAltText,
-  getTitle,
-} from "../scripts/gpt-request";
-import MicButton from "../components/MicButton";
+import { useBookmarks } from "./BookmarkContext";
 
 const GalleryScreen = ({ route, navigation }) => {
+  const { bookmarks, loadBookmarks, removeBookmark } = useBookmarks();
+
+  useEffect(() => {
+    loadBookmarks();
+  }, []);
+
+  const playAudio = async (audio) => {
+    if (!audio) return;
+    const sound = new Audio.Sound();
+    await sound.loadAsync({ uri: audio.uri });
+    await sound.playAsync();
+  };
+
 
   return (
-    <KeyboardAwareScrollView
-      style={{ backgroundColor: theme.colors.white }}
-      keyboardDismissMode="on-drag"
-    >
-      <View style={styles.container}>
-        
-      </View>
-    </KeyboardAwareScrollView>
+    <FlatList
+  data={bookmarks}
+  keyExtractor={(item) => item.id.toString()} 
+  renderItem={({ item }) => (
+    <View style={{ margin: 10 }}>
+      <Image source={{ uri: item.image }} style={{ width: 100, height: 100 }} />
+      <Text>{item.name}</Text>
+      <TouchableOpacity onPress={() => playAudio(item.audio)}>
+        <Text>Play Audio</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => removeBookmark(item.id)}>
+        <Text style={{ color: "red" }}>Delete</Text>
+      </TouchableOpacity>
+    </View>
+  )}
+/>
   );
 };
 
@@ -44,5 +55,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: theme.colors.white,
     padding: "5%",
+  },
+  itemContainer: {
+    margin: 10,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  image: {
+    width: 100,
+    height: 100,
+    marginRight: 10,
+  },
+  deleteButton: {
+    marginLeft: 10,
   },
 });
