@@ -149,7 +149,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
     );
     await sound.setIsLoopingAsync(true);
     const status = await sound.getStatusAsync();
-    setDuration(status.durationMillis);
+    // setDuration(status.durationMillis);
 
     await sound.pauseAsync();
 
