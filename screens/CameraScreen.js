@@ -34,7 +34,7 @@ const CameraScreen = ({ route, navigation }) => {
     }
 
     const startChecking = () => {
-      const intervalId = setInterval(checkContainsArtwork, 10000); // 10 seconds
+      const intervalId = setInterval(checkContainsArtwork, 5000); // 10 seconds
       setIntervalId(intervalId);
     };
 
@@ -99,12 +99,12 @@ const CameraScreen = ({ route, navigation }) => {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalText}>
-              Welcome to Mosaic! Experience realism through sound with
-              Mosaic. Simply take a picture of your artwork, and Mosaic will
-              generate a detailed description and an immersive soundscape that
-              brings your art to life. You can then record your own
-              requests—like 'add chirping birds'—to adjust the audio and shape
-              it to match your mental image of the piece.
+              Welcome to Mosaic! Experience realism through sound with Mosaic.
+              Simply take a picture of your artwork, and Mosaic will generate a
+              detailed description and an immersive soundscape that brings your
+              art to life. You can then record your own requests—like 'add
+              chirping birds'—to adjust the audio and shape it to match your
+              mental image of the piece.
             </Text>
             <Button title="Continue" onPress={() => setIsModalVisible(false)} />
           </View>

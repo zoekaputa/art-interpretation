@@ -156,6 +156,8 @@ export async function requestSoundDescriptionUpdate(
                           message: <message explaining what you changed. Do not refer to the array of descriptions directly>,
                           descriptions: [<foreground>,<middle-ground>,<background>]
                         }
+
+                        If the user's request does not warrent a change, tell them in the message you didn't change anything and keep the descriptions the same.
                           
                         current descriptions: ${descriptions}`,
             },

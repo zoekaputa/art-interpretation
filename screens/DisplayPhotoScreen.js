@@ -55,7 +55,10 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
 
       const descText = await getAltText(route.params.photo.base64);
       setDescriptionText(descText);
-      await playDescriptionAudio(descText + "Mosaic is still generating the audio for your artpiece. Please wait while we compose your soundscape experience.");
+      await playDescriptionAudio(
+        descText +
+          "Mosaic is still generating the audio for your artpiece. Please wait while we compose your soundscape experience."
+      );
 
       const title = await getTitle(route.params.photo.base64);
       setArtName(title);
@@ -188,7 +191,8 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
           style={styles.imageContainer}
           accessible={true}
           accessibilityLabel={
-            descriptionText || "Image of your artpiece. We are still generating alt text for this image."
+            descriptionText ||
+            "Image of your artpiece. We are still generating alt text for this image."
           }
         >
           <Image
@@ -199,7 +203,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         {isLoading ? (
           <>
             <Text style={styles.directions}>
-              Mosaic is generating an audio for your image. 
+              Mosaic is generating an audio for your image.
             </Text>
             <ActivityIndicator
               size="large"
@@ -211,7 +215,13 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
           <>
             <View style={styles.titleContainer}>
               {/* Title */}
-              <Text style={styles.titleText}>{artName}</Text>
+              <Text
+                style={styles.titleText}
+                accessible={true}
+                accessibilityLabel={`title: ${artName}`}
+              >
+                {artName}
+              </Text>
             </View>
             {/* Buttons */}
             <View style={styles.controlsRow}>
