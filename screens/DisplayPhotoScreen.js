@@ -16,6 +16,8 @@ import {
   requestSoundDescriptions,
   createAudioDescription,
   uploadUrlToDevice,
+  getAltText,
+  getTitle,
 } from "../scripts/gpt-request";
 import MicButton from "../components/MicButton";
 
@@ -26,9 +28,8 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [timeEllapsed, setTimeEllapsed] = useState(0);
   const [duration, setDuration] = useState(-1);
-  const descriptionText = !soundDescriptions
-    ? null
-    : `In the foreground of the art, there is ${soundDescriptions[0]}. In the middle-ground, there is ${soundDescriptions[1]}. And the background has ${soundDescriptions[2]}. Please wait while Mosaic generates your soundscape.`;
+  const [descriptionText, setDescriptionText] = useState(null);
+  const [artName, setArtName] = useState(null);
 
   useEffect(() => {
     const reqSounds = async () => {
@@ -53,8 +54,12 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       console.log(descriptions);
       setSoundDescriptions(descriptions);
 
-      const descText = `In the foreground of the art, there is ${descriptions[0]}. In the middle-ground, there is ${descriptions[1]}. And the background has ${descriptions[2]}.`;
+      const descText = await getAltText(route.params.photo.base64);
+      setDescriptionText(descText);
       await playDescriptionAudio(descText);
+
+      const title = await getTitle(route.params.photo.base64);
+      setArtName(title);
 
       const newSounds = await Promise.all(
         descriptions.map(async (desc) => {
@@ -256,7 +261,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
           <>
             <View style={styles.titleContainer}>
               {/* Title */}
-              <Text style={styles.titleText}>Artpiece Name</Text>
+              <Text style={styles.titleText}>{artName}</Text>
             </View>
             {/* Buttons */}
             <View style={styles.controlsRow}>
