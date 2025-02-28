@@ -41,6 +41,18 @@ const CameraScreen = ({ route, navigation }) => {
     setTimeout(startChecking);
   }, [isReady]);
 
+  useEffect(() => {
+    if (photoDisabled) {
+      AccessibilityInfo.announceForAccessibility(
+        "No artwork detected, you can still use the camera button to take a picture."
+      );
+    } else {
+      AccessibilityInfo.announceForAccessibility(
+        "Artwork detected, use the camera button to take a picture."
+      );
+    }
+  }, [photoDisabled]);
+
   if (!permission) {
     // Camera permissions are still loading.
     return <View />;
@@ -67,11 +79,6 @@ const CameraScreen = ({ route, navigation }) => {
 
     const contains = await containsArtwork(photo.base64);
     // console.log(contains, contains === "true");
-    if (contains === "true") {
-      AccessibilityInfo.announceForAccessibility(
-        "Artwork detected, use the camera button to take a picture."
-      );
-    }
     setPhotoDisabled(!(contains === "true"));
   }
 
@@ -122,7 +129,6 @@ const CameraScreen = ({ route, navigation }) => {
           <TouchableOpacity
             style={styles.centerButton}
             onPress={takePicture}
-            disabled={photoDisabled}
             accessibilityLabel={
               photoDisabled
                 ? "Camera Button. No artwork detected, camera disabled."

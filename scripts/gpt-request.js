@@ -236,7 +236,7 @@ export async function getTitle(base64Img) {
           content: [
             {
               type: "text",
-              text: "Come up with a five or less word descriptive name for the painting in this image.",
+              text: "Come up with a five or less word descriptive name for the painting in this image. Do not surround the title in quotes",
             },
             {
               type: "image_url",
