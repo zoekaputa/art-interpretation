@@ -27,7 +27,6 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
   const [soundDescriptions, setSoundDescriptions] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [timeEllapsed, setTimeEllapsed] = useState(0);
-  const [duration, setDuration] = useState(-1);
   const [descriptionText, setDescriptionText] = useState(null);
   const [artName, setArtName] = useState(null);
 
@@ -179,55 +178,6 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
     });
   };
 
-  const formatTime = (milliseconds) => {
-    if (milliseconds < 0 || isNaN(milliseconds)) return "0:00";
-    const minutes = Math.floor(milliseconds / 60000);
-    const seconds = Math.floor((milliseconds % 60000) / 1000);
-    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-  };
-
-  const seekTo = async (value) => {
-    if (!sounds) return;
-
-    // Seek all sounds to the selected position
-    await Promise.all(
-      sounds.map(async (sound) => {
-        await sound.setPositionAsync(value);
-      })
-    );
-
-    setTimeEllapsed(value); // Update the displayed time
-  };
-
-  const rewind5 = async () => {
-    if (!sounds) return;
-
-    await Promise.all(
-      sounds.map(async (sound) => {
-        const status = await sound.getStatusAsync();
-        const newPosition = Math.max(0, status.positionMillis - 5000); // Move back 5 seconds
-        await sound.setPositionAsync(newPosition);
-        setTimeEllapsed(newPosition); // Update the displayed time
-      })
-    );
-  };
-
-  const forward5 = async () => {
-    if (!sounds) return;
-
-    await Promise.all(
-      sounds.map(async (sound) => {
-        const status = await sound.getStatusAsync();
-        const newPosition = Math.min(
-          status.durationMillis,
-          status.positionMillis + 5000
-        ); // Move forward 5 seconds
-        await sound.setPositionAsync(newPosition);
-        setTimeEllapsed(newPosition); // Update the displayed time
-      })
-    );
-  };
-
   return (
     <KeyboardAwareScrollView
       style={{ backgroundColor: theme.colors.white }}
@@ -249,7 +199,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         {isLoading ? (
           <>
             <Text style={styles.directions}>
-              Artsonix is generating an audio for your image.
+              Mosaic is generating an audio for your image.
             </Text>
             <ActivityIndicator
               size="large"

@@ -99,8 +99,8 @@ const CameraScreen = ({ route, navigation }) => {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalText}>
-              Welcome to Artsonix! Experience realism through sound with
-              Artsonix. Simply take a picture of your artwork, and Artsonix will
+              Welcome to Mosaic! Experience realism through sound with
+              Mosaic. Simply take a picture of your artwork, and Mosaic will
               generate a detailed description and an immersive soundscape that
               brings your art to life. You can then record your own
               requests—like 'add chirping birds'—to adjust the audio and shape
@@ -110,7 +110,7 @@ const CameraScreen = ({ route, navigation }) => {
           </View>
         </View>
       </Modal>
-      <Text style={styles.logo}>artsonix</Text>
+      <Text style={styles.logo}>mosaic</Text>
       <View style={styles.cameraWrapper}>
         {/* Camera */}
         <CameraView
