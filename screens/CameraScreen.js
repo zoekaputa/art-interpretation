@@ -63,7 +63,7 @@ const CameraScreen = ({ route, navigation }) => {
     return (
       <View style={styles.container}>
         <Text style={{ textAlign: "center" }}>
-          We need your permission to show the camera
+          We need your permission to use the camera
         </Text>
         <Button onPress={requestPermission} title="grant permission" />
       </View>

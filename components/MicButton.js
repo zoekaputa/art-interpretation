@@ -6,6 +6,7 @@ import {
   Easing,
   Button,
   Text,
+  Modal, 
 } from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { Audio } from "expo-av";
@@ -28,6 +29,7 @@ const MicButton = ({
   const [permissionResponse, requestPermission] = Audio.usePermissions();
   const [isRecording, setIsRecording] = useState(false);
   const [recording, setRecording] = useState(null);
+  const [showPermissionModal, setShowPermissionModal] = useState(false);
 
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const opacityAnim = useRef(new Animated.Value(1)).current;
@@ -73,32 +75,35 @@ const MicButton = ({
   }
 
   useEffect(() => {
-    const setPerm = async () => {
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: false,
-        playsInSilentModeIOS: true,
-      });
-    };
+    if (!permissionResponse || permissionResponse.status !== "granted") {
+      setShowPermissionModal(true);
+    }
+  }, [permissionResponse]);
 
-    setPerm();
-  }, []);
+  const requestMicPermission = async () => {
+    await requestPermission();
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: false,
+      playsInSilentModeIOS: true,
+    });
+
+    if (permissionResponse?.status === "granted") {
+      setShowPermissionModal(false);
+    }
+  };
 
   if (!permissionResponse || permissionResponse.status !== "granted") {
-    // Camera permissions are not granted yet.
-    const reqPerm = async () => {
-      await requestPermission();
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: false,
-        playsInSilentModeIOS: true,
-      });
-    };
     return (
-      <View>
-        <Text style={{ textAlign: "center" }}>
-          We need your permission to use the mic
-        </Text>
-        <Button onPress={reqPerm} title="grant permission" />
-      </View>
+      <Modal visible={showPermissionModal} transparent animationType="fade">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={{ textAlign: "center", marginBottom: 10 }}>
+              We need your permission to use the microphone.
+            </Text>
+            <Button onPress={requestMicPermission} title="Grant Permission" />
+          </View>
+        </View>
+      </Modal>
     );
   }
 
