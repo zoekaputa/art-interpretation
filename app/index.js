@@ -1,4 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import GalleryScreen from "../screens/GalleryScreen";
 import CameraScreen from "../screens/CameraScreen";
 import DisplayPhotoScreen from "../screens/DisplayPhotoScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -34,10 +35,33 @@ export default function HomeScreen() {
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <FontAwesome6
                 name="chevron-left"
-                size={20}
+                size={32}
                 color={theme.colors.black}
                 style={styles.icon}
-              />
+                accessible={true}
+                accessibilityLabel="Back to Camera"
+              /> 
+            </TouchableOpacity>
+          ),
+          headerTransparent: true,
+          headerStyle: { backgroundColor: "transparent", elevation: 0, shadowOpacity: 0 },
+        })}
+      />
+      <Stack.Screen
+        name="Gallery Screen"
+        component={GalleryScreen}
+        options={({ navigation }) => ({
+          headerTitle: "",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <FontAwesome6
+                name="chevron-left"
+                size={32}
+                color={theme.colors.black}
+                style={styles.icon}
+                accessible={true}
+                accessibilityLabel="Back to Camera"
+              /> 
             </TouchableOpacity>
           ),
           headerTransparent: true,

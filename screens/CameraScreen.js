@@ -140,6 +140,13 @@ const CameraScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
+      <TouchableOpacity 
+        onPress={() => navigation.navigate("Gallery Screen")} 
+        style={styles.galleryButtonContainer}
+      >
+        <Text style={styles.galleryButton}>my gallery</Text>
+      </TouchableOpacity>
+      
     </View>
   );
 };
@@ -157,7 +164,6 @@ const styles = StyleSheet.create({
   logo: {
     fontFamily: theme.fonts.karlaLight,
     fontSize: 35,
-    fontStyle: "italic",
     marginBottom: 20,
     color: theme.colors.darkBlue,
     textShadowColor: theme.colors.lightBlue,
@@ -197,18 +203,18 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     margin: "auto",
   },
-  textContainer: {
-    width: 50,
-    height: 50,
-    justifyContent: "center",
+  galleryButtonContainer:{
     alignItems: "center",
-  },
-  text: {
-    fontSize: 30,
-    fontWeight: "bold",
-    color: theme.colors.white,
-    textAlign: "center",
-    includeFontPadding: false,
+    justifyContent: "center",
+    margin: "10%",
+  }, 
+  galleryButton: {
+    fontFamily: theme.fonts.karlaLight,
+    fontSize: 25,
+    color: theme.colors.darkBlue,
+    textShadowColor: theme.colors.lightBlue,
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
   modalOverlay: {
     flex: 1,
