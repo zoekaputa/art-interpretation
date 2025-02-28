@@ -6,7 +6,7 @@ import {
   Easing,
   Button,
   Text,
-  Modal, 
+  Modal,
 } from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { Audio } from "expo-av";
@@ -150,6 +150,11 @@ const MicButton = ({
   const stopPulsing = async () => {
     setIsLoading(true);
     await stopRecording();
+
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: false,
+    });
+
     setIsRecording(false);
     scaleAnim.setValue(1);
     opacityAnim.setValue(1);
@@ -172,14 +177,11 @@ const MicButton = ({
         }
       })
     );
+
+    await playResponseAudio(response.message);
+
     setSounds(newSounds);
     setSoundDescriptions(response.descriptions);
-
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-    });
-
-    playResponseAudio(response.message);
 
     setIsLoading(false);
   };
