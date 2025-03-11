@@ -142,12 +142,12 @@ const CameraScreen = ({ route, navigation }) => {
       </View>
 
       
-      {/* <TouchableOpacity 
+      <TouchableOpacity 
         onPress={() => navigation.navigate("Gallery Screen")} 
         style={styles.galleryButtonContainer}
       >
         <Text style={styles.galleryButton}>my gallery</Text>
-      </TouchableOpacity> */}
+      </TouchableOpacity>
       
     </View>
   );

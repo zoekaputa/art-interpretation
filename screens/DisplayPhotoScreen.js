@@ -36,7 +36,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
   const handleBookmark = () => {
     const newBookmark = {
       image: route.params.photo.uri,
-      audio: sounds ? sounds[0] : null,
+      audio: sounds,
       name: artName,
     };
 
@@ -91,7 +91,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       setIsLoading(false);
     };
 
-    //reqSounds();
+    // reqSounds();
   }, []);
 
   useEffect(() => {

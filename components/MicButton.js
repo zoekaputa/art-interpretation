@@ -206,7 +206,7 @@ const MicButton = ({
           size={30}
           color="#AAD2F7"
           accessible={true}
-          accessibilityLabel="Microphone button. How would you like to change the generated audio?"
+          accessibilityLabel="Microphone button. How would you like to change the generated audio? Click to start recording. Click again to stop recording."
         />
       </TouchableOpacity>
     </View>
