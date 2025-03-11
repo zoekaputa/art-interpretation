@@ -19,12 +19,15 @@ const GalleryScreen = ({ route, navigation }) => {
   }, []);
 
   const playAudio = async (audio) => {
-    if (!audio) return;
-    const sound = new Audio.Sound();
-    await sound.loadAsync({ uri: audio.uri });
-    await sound.playAsync();
+    try {
+      audio.forEach((sound) => {
+        console.log(sound);
+        sound.playAsync();
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
-
 
   return (
     <View style={styles.container}>
@@ -32,12 +35,14 @@ const GalleryScreen = ({ route, navigation }) => {
         <Text style={styles.galleryHeader}>my gallery</Text>
       </View>
       <FlatList
-        
         data={bookmarks}
-        keyExtractor={(item) => item.id.toString()} 
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.itemContainer}>
-            <Image source={{ uri: item.image }} style={{ width: 100, height: 100 }} />
+            <Image
+              source={{ uri: item.image }}
+              style={{ width: 100, height: 100 }}
+            />
             <Text>{item.name}</Text>
             <TouchableOpacity onPress={() => playAudio(item.audio)}>
               <Text>Play Audio</Text>
@@ -49,7 +54,6 @@ const GalleryScreen = ({ route, navigation }) => {
         )}
       />
     </View>
-    
   );
 };
 
@@ -63,11 +67,11 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.white,
     padding: "5%",
   },
-  galleryHeaderContainer:{
+  galleryHeaderContainer: {
     alignItems: "center",
     justifyContent: "center",
     marginBottom: "10%",
-  }, 
+  },
   galleryHeader: {
     fontFamily: theme.fonts.karlaLight,
     fontSize: 25,

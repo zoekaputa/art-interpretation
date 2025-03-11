@@ -25,6 +25,8 @@ const MicButton = ({
   setSoundDescriptions,
   setIsLoading,
   image,
+  playLoadingSound,
+  stopLoadingSound,
 }) => {
   const [permissionResponse, requestPermission] = Audio.usePermissions();
   const [isRecording, setIsRecording] = useState(false);
@@ -155,6 +157,8 @@ const MicButton = ({
       allowsRecordingIOS: false,
     });
 
+    const loadingSound = await playLoadingSound();
+
     setIsRecording(false);
     scaleAnim.setValue(1);
     opacityAnim.setValue(1);
@@ -179,6 +183,8 @@ const MicButton = ({
     );
 
     await playResponseAudio(response.message);
+
+    await stopLoadingSound(loadingSound);
 
     setSounds(newSounds);
     setSoundDescriptions(response.descriptions);

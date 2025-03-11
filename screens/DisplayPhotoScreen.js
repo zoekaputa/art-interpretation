@@ -91,7 +91,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       setIsLoading(false);
     };
 
-    // reqSounds();
+    reqSounds();
   }, []);
 
   useEffect(() => {
@@ -248,6 +248,8 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   reqSound={reqSound}
                   setSoundDescriptions={setSoundDescriptions}
                   setIsLoading={setIsLoading}
+                  playLoadingSound={playLoadingSound}
+                  stopLoadingSound={stopLoadingSound}
                   image={route.params.photo.base64}
                 />
               </View>
@@ -273,7 +275,6 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
             </View>
           </>
         )}
-        
       </View>
     </KeyboardAwareScrollView>
   );

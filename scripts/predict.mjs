@@ -22,7 +22,9 @@ app.listen(port, () => {
   console.log(`Server is running on http://10.30.17.242:${port}`); // ipconfig getifaddr en0
 });
 
-const model = await Client.connect("haoheliu/audioldm2-text2audio-text2music");
+const model = await Client.connect(
+  "haoheliu/audioldm-text-to-audio-generation"
+);
 
 // Create a route and a handler for GET /posts/:id
 app.post("/post", jsonParser, async (req, res) => {
@@ -31,11 +33,11 @@ app.post("/post", jsonParser, async (req, res) => {
     // const msg = await anthropic.messages.create(req.body);
     const result = await model.predict("/text2audio", [
       req.body.description,
-      "low quality",
+      "low quality, average quality",
       10,
       3.5,
       45,
-      3,
+      1,
     ]);
 
     const videoUrl = result.data[0].video.url;
