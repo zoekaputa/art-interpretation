@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Text,
   StyleSheet,
@@ -9,10 +9,12 @@ import {
 } from "react-native";
 import { Audio } from "expo-av";
 import theme from "../theme";
+import { FontAwesome6 } from "@expo/vector-icons";
 import { useBookmarks } from "./BookmarkContext";
 
 const GalleryScreen = ({ route, navigation }) => {
   const { bookmarks, loadBookmarks, removeBookmark } = useBookmarks();
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     loadBookmarks();
@@ -28,7 +30,14 @@ const GalleryScreen = ({ route, navigation }) => {
         console.log(uri)
         const sound = new Audio.Sound();
         await sound.loadAsync({ uri });
-        await sound.playAsync();
+
+        if (isPlaying) {
+          sound.pauseAsync();
+          setIsPlaying(false);
+        } else {
+          sound.playAsync();
+          setIsPlaying(true);
+        }
       }
     } catch (error) {
       console.error("Error playing audio:", error);
@@ -48,15 +57,26 @@ const GalleryScreen = ({ route, navigation }) => {
           <View style={styles.itemContainer}>
             <Image
               source={{ uri: item.image }}
-              style={{ width: 100, height: 100 }}
+              style={styles.image}
             />
-            <Text>{item.name}</Text>
-            <TouchableOpacity onPress={() => playAudio(item.audio)}>
-              <Text>Play Audio</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => removeBookmark(item.id)}>
-              <Text style={{ color: "red" }}>Delete</Text>
-            </TouchableOpacity>
+            <Text style={styles.titleText}>{item.name}</Text>
+            <View style={styles.controlsRow}>
+              <TouchableOpacity style={styles.playButton} onPress={() => playAudio(item.audio)}>
+                  <FontAwesome6
+                    name={isPlaying ? "pause" : "play"}
+                    size={22}
+                    color={theme.colors.darkBlue}
+                    left="2"
+                  />
+                </TouchableOpacity>
+              <TouchableOpacity onPress={() => removeBookmark(item.id)}>
+                <FontAwesome6
+                    name={"trash-can"}
+                    size={32}
+                    color={"red"}
+                  />
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       />
@@ -91,12 +111,33 @@ const styles = StyleSheet.create({
     margin: 10,
     alignItems: "center",
     justifyContent: "flex-start",
-    flexDirection: "row",
   },
   image: {
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 150,
     marginRight: 10,
+  },
+  titleText: {
+    fontFamily: theme.fonts.karlaLight,
+    fontSize: 20,
+    padding: 10,
+  },
+  controlsRow: {
+    flexDirection: "row",
+    width: "50%",
+    paddingHorizontal: "10%",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  playButton: {
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: theme.colors.darkBlue,
+    marginHorizontal: "1%",
   },
   deleteButton: {
     marginLeft: 10,
