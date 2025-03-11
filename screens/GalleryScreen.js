@@ -18,16 +18,23 @@ const GalleryScreen = ({ route, navigation }) => {
     loadBookmarks();
   }, []);
 
-  const playAudio = async (audio) => {
+  const playAudio = async (audioArray) => {
     try {
-      audio.forEach((sound) => {
-        console.log(sound);
-        sound.playAsync();
-      });
+      if (!audioArray || audioArray.length === 0) return;
+  
+      for (const s of audioArray) {
+        const status = JSON.parse(s._lastStatusUpdate); // Convert JSON string to object
+        const uri = status.uri || null; 
+        console.log(uri)
+        const sound = new Audio.Sound();
+        await sound.loadAsync({ uri });
+        await sound.playAsync();
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Error playing audio:", error);
     }
   };
+  
 
   return (
     <View style={styles.container}>
