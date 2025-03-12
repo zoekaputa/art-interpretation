@@ -7,10 +7,10 @@ const openai = new OpenAI({
   apiKey: process.env.EXPO_PUBLIC_GPT_API_KEY,
 });
 
-export async function uploadUrlToDevice(url) {
+export async function uploadUrlToDevice(url, name) {
   const response = await axios.get(url, { responseType: "arraybuffer" });
   const buffer = Buffer.from(response.data, "utf-8");
-  const fileUri = await saveBufferToFile(buffer, "myfile.mp4");
+  const fileUri = await saveBufferToFile(buffer, `${name}.mp4`);
   return fileUri;
 }
 

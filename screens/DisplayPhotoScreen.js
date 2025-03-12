@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Text,
   StyleSheet,
@@ -11,6 +11,7 @@ import { Audio } from "expo-av";
 import { FontAwesome6, Feather } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { requestSound } from "../scripts/request-server";
+import { useFocusEffect } from "@react-navigation/native";
 import theme from "../theme";
 import {
   requestSoundDescriptions,
@@ -43,6 +44,24 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
     addBookmark(newBookmark);
     setIsBookmarked(true);
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        console.log(sounds);
+        if (!sounds) {
+          return null;
+        }
+
+        sounds.forEach((sound) => {
+          if (isPlaying) {
+            sound.pauseAsync();
+            setIsPlaying(false);
+          }
+        });
+      };
+    }, [sounds, isPlaying])
+  );
 
   useEffect(() => {
     const reqSounds = async () => {
@@ -156,7 +175,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
   const reqSound = async (desc) => {
     const soundUrl = await requestSound(desc);
     console.log(desc, ":", soundUrl);
-    const localFileUri = await uploadUrlToDevice(soundUrl);
+    const localFileUri = await uploadUrlToDevice(soundUrl, desc);
     const sound = new Audio.Sound();
     await sound.loadAsync(
       {
