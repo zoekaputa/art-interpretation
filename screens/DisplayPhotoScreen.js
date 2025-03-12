@@ -33,6 +33,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
   const [timeEllapsed, setTimeEllapsed] = useState(0);
   const [descriptionText, setDescriptionText] = useState(null);
   const [artName, setArtName] = useState(null);
+  const [loadingSound, setLoadingSound] = useState(null);
 
   const handleBookmark = () => {
     const newBookmark = {
@@ -49,7 +50,10 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
   useFocusEffect(
     useCallback(() => {
       return () => {
-        console.log(sounds);
+        if (loadingSound) {
+          loadingSound.pauseAsync();
+        }
+
         if (!sounds) {
           return null;
         }
@@ -61,7 +65,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
           }
         });
       };
-    }, [sounds, isPlaying])
+    }, [sounds, isPlaying, loadingSound])
   );
 
   useEffect(() => {
@@ -69,6 +73,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       setIsLoading(true);
 
       const loadingSound = await playLoadingSound();
+      setLoadingSound(loadingSound);
 
       await Audio.setAudioModeAsync({
         staysActiveInBackground: true,
@@ -105,6 +110,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       );
 
       await stopLoadingSound(loadingSound);
+      setLoadingSound(null);
 
       setSounds(newSounds);
 
@@ -271,6 +277,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   playLoadingSound={playLoadingSound}
                   stopLoadingSound={stopLoadingSound}
                   image={route.params.photo.base64}
+                  setLoadingSound={setLoadingSound}
                 />
               </View>
               <TouchableOpacity style={styles.playButton} onPress={playSounds}>

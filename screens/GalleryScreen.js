@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Text,
   StyleSheet,
@@ -12,13 +12,40 @@ import theme from "../theme";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { useBookmarks } from "./BookmarkContext";
 import { CurrentRenderContext } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 
 const GalleryScreen = ({ route, navigation }) => {
   const { bookmarks, loadBookmarks, removeBookmark } = useBookmarks();
   const [isPlaying, setIsPlaying] = useState(null);
   const [currentlyPlayingId, setCurrentlyPlayingId] = useState(null);
 
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        if (isPlaying) {
+          isPlaying.forEach(async (s) => {
+            s.pauseAsync();
+          });
+        }
+      };
+    }, [isPlaying])
+  );
+
   useEffect(() => {
+    const setAudioMode = async () => {
+      await Audio.setAudioModeAsync({
+        staysActiveInBackground: true,
+        interruptionModeAndroid: 1,
+        shouldDuckAndroid: true,
+        playThroughEarpieceAndroid: true,
+        allowsRecordingIOS: false,
+        interruptionModeIOS: 0,
+        playsInSilentModeIOS: true,
+      });
+    };
+
+    setAudioMode();
+
     loadBookmarks();
   }, []);
 
