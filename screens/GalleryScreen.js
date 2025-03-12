@@ -50,6 +50,7 @@ const GalleryScreen = ({ route, navigation }) => {
   }, []);
 
   const playAudio = async (item) => {
+    console.log(item.descriptionText)
     const audioArray = item.audio;
     try {
       if (!audioArray || audioArray.length === 0) return;
@@ -99,7 +100,9 @@ const GalleryScreen = ({ route, navigation }) => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.itemContainer}>
-            <Image source={{ uri: item.image }} style={styles.image} />
+            <View style={styles.imageContainer} accessible={true} >
+              <Image source={{ uri: item.image }} style={styles.image} accessibilityLabel={item.descriptionText}/>
+            </View>
             <Text style={styles.titleText}>{item.name}</Text>
             <View style={styles.controlsRow}>
               <TouchableOpacity
@@ -114,7 +117,8 @@ const GalleryScreen = ({ route, navigation }) => {
                 />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => removeBookmark(item.id)}>
-                <FontAwesome6 name={"trash-can"} size={32} color={"red"} />
+                <FontAwesome6 name={"trash-can"} size={32} color={"red"} accessible={true}
+                    accessibilityLabel={"Remove from gallery"}/>
               </TouchableOpacity>
             </View>
           </View>
@@ -151,6 +155,11 @@ const styles = StyleSheet.create({
     margin: 10,
     alignItems: "center",
     justifyContent: "flex-start",
+  },
+  imageContainer: {
+    padding: "10%",
+    height: "fit-content",
+    alignItems: "center",
   },
   image: {
     width: 150,

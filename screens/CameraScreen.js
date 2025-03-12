@@ -86,7 +86,7 @@ const CameraScreen = ({ route, navigation }) => {
     if (cameraRef.current) {
       clearInterval(intervalId);
       let photo = await cameraRef.current.takePictureAsync({ base64: true });
-      navigation.navigate("Photo Display Screen", {
+      navigation.navigate("Photo Display", {
         photo,
       });
     }
@@ -143,10 +143,13 @@ const CameraScreen = ({ route, navigation }) => {
 
       
       <TouchableOpacity 
-        onPress={() => navigation.navigate("Gallery Screen")} 
+        onPress={() => navigation.navigate("Gallery")} 
         style={styles.galleryButtonContainer}
       >
-        <Text style={styles.galleryButton}>my gallery</Text>
+        <FontAwesome6 name="images" size={32}
+                    color={theme.colors.darkBlue}
+                    accessible={true}
+                    accessibilityLabel={"your gallery"} />
       </TouchableOpacity>
       
     </View>
@@ -210,14 +213,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     margin: "10%",
   }, 
-  galleryButton: {
-    fontFamily: theme.fonts.karlaLight,
-    fontSize: 25,
-    color: theme.colors.darkBlue,
-    textShadowColor: theme.colors.lightBlue,
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
-  },
   modalOverlay: {
     flex: 1,
     justifyContent: "center",

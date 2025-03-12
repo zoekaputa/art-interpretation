@@ -213,7 +213,7 @@ const MicButton = ({
         <FontAwesome6
           name="microphone"
           size={30}
-          color="#AAD2F7"
+          color={theme.colors.darkBlue}
           accessible={true}
           accessibilityLabel="Microphone button. How would you like to change the generated audio? Click to start recording. Click again to stop recording."
         />
@@ -234,7 +234,7 @@ const styles = {
     borderRadius: 30,
     alignItems: "center",
     justifyContent: "center",
-    borderColor: theme.colors.lightBlue,
+    borderColor: theme.colors.darkBlue,
     borderWidth: 2,
     shadowColor: "rgba(141, 193, 221, 0.5)",
     shadowOffset: { width: 0, height: 0 },

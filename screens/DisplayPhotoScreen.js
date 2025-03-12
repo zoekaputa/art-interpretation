@@ -38,6 +38,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
   const handleBookmark = () => {
     const newBookmark = {
       image: route.params.photo.uri,
+      descriptionText: descriptionText,
       audio: sounds,
       name: artName,
     };
@@ -117,7 +118,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       setIsLoading(false);
     };
 
-    reqSounds();
+    //reqSounds();
   }, []);
 
   useEffect(() => {
@@ -288,17 +289,30 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   left="2"
                 />
               </TouchableOpacity>
+            </View>
+            <View style={styles.controlsRow}>
               <View style={styles.controlButton}>
                 <TouchableOpacity onPress={handleBookmark}>
                   <FontAwesome6
-                    name={isBookmarked ? "bookmark" : "bookmark"}
+                    name={"bookmark"}
                     size={32}
                     color={theme.colors.darkBlue}
                     accessible={true}
-                    accessibilityLabel="Add to Gallery"
+                    accessibilityLabel={isBookmarked ? "Added to Gallery" : "Add to Gallery"}
                   />
                 </TouchableOpacity>
               </View>
+              <View style={styles.controlButton}>
+              <TouchableOpacity 
+                      onPress={() => navigation.navigate("Gallery")} 
+                    >
+                      <FontAwesome6 name="images" size={32}
+                      paddingTop={5}
+                    color={theme.colors.darkBlue}
+                    accessible={true}
+                    accessibilityLabel={"your gallery"} />
+                    </TouchableOpacity>
+                    </View>
             </View>
           </>
         )}
@@ -353,7 +367,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     paddingHorizontal: "10%",
-    justifyContent: "space-between",
+    paddingBottom: "10%",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 55,
+    
   },
   controlButton: {
     width: 50,
@@ -369,8 +387,8 @@ const styles = StyleSheet.create({
     top: 20,
   },
   playButton: {
-    width: 50,
-    height: 50,
+    width: 53,
+    height: 53,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 30,
@@ -382,5 +400,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: "5%",
     justifyContent: "center",
+  },
+  galleryButton: {
+    fontFamily: theme.fonts.karlaLight,
+    fontSize: 25,
+    color: theme.colors.darkBlue,
+    textShadowColor: theme.colors.lightBlue,
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
 });
