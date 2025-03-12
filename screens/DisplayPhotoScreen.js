@@ -41,6 +41,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       name: artName,
     };
 
+    console.log("bookmarked");
     addBookmark(newBookmark);
     setIsBookmarked(true);
   };

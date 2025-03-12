@@ -11,39 +11,56 @@ import { Audio } from "expo-av";
 import theme from "../theme";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { useBookmarks } from "./BookmarkContext";
+import { CurrentRenderContext } from "@react-navigation/native";
 
 const GalleryScreen = ({ route, navigation }) => {
   const { bookmarks, loadBookmarks, removeBookmark } = useBookmarks();
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(null);
+  const [currentlyPlayingId, setCurrentlyPlayingId] = useState(null);
 
   useEffect(() => {
     loadBookmarks();
   }, []);
 
-  const playAudio = async (audioArray) => {
+  const playAudio = async (item) => {
+    const audioArray = item.audio;
     try {
       if (!audioArray || audioArray.length === 0) return;
-  
-      for (const s of audioArray) {
-        const status = JSON.parse(s._lastStatusUpdate); // Convert JSON string to object
-        const uri = status.uri || null; 
-        console.log(uri)
-        const sound = new Audio.Sound();
-        await sound.loadAsync({ uri });
 
-        if (isPlaying) {
-          sound.pauseAsync();
-          setIsPlaying(false);
-        } else {
-          sound.playAsync();
-          setIsPlaying(true);
+      if (isPlaying) {
+        isPlaying.forEach(async (s) => {
+          s.pauseAsync();
+        });
+
+        console.log(item.id, currentlyPlayingId, item.id == currentlyPlayingId);
+        if (item.id == currentlyPlayingId) {
+          setCurrentlyPlayingId(null);
         }
+      }
+
+      if (item.id != currentlyPlayingId) {
+        const newSounds = await Promise.all(
+          audioArray.map(async (s) => {
+            const status = JSON.parse(s._lastStatusUpdate); // Convert JSON string to object
+            const uri = status.uri || null;
+            console.log(uri);
+            const sound = new Audio.Sound();
+            await sound.loadAsync({ uri });
+            await sound.setIsLoopingAsync(true);
+
+            sound.playAsync();
+
+            return sound;
+          })
+        );
+
+        setIsPlaying(newSounds);
+        setCurrentlyPlayingId(item.id);
       }
     } catch (error) {
       console.error("Error playing audio:", error);
     }
   };
-  
 
   return (
     <View style={styles.container}>
@@ -55,26 +72,22 @@ const GalleryScreen = ({ route, navigation }) => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.itemContainer}>
-            <Image
-              source={{ uri: item.image }}
-              style={styles.image}
-            />
+            <Image source={{ uri: item.image }} style={styles.image} />
             <Text style={styles.titleText}>{item.name}</Text>
             <View style={styles.controlsRow}>
-              <TouchableOpacity style={styles.playButton} onPress={() => playAudio(item.audio)}>
-                  <FontAwesome6
-                    name={isPlaying ? "pause" : "play"}
-                    size={22}
-                    color={theme.colors.darkBlue}
-                    left="2"
-                  />
-                </TouchableOpacity>
-              <TouchableOpacity onPress={() => removeBookmark(item.id)}>
+              <TouchableOpacity
+                style={styles.playButton}
+                onPress={() => playAudio(item)}
+              >
                 <FontAwesome6
-                    name={"trash-can"}
-                    size={32}
-                    color={"red"}
-                  />
+                  name={currentlyPlayingId == item.id ? "pause" : "play"}
+                  size={22}
+                  color={theme.colors.darkBlue}
+                  left="2"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => removeBookmark(item.id)}>
+                <FontAwesome6 name={"trash-can"} size={32} color={"red"} />
               </TouchableOpacity>
             </View>
           </View>
