@@ -289,6 +289,8 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   left="2"
                 />
               </TouchableOpacity>
+            </View>
+            <View style={styles.controlsRow}>
               <View style={styles.controlButton}>
                 <TouchableOpacity onPress={handleBookmark}>
                   <FontAwesome6
@@ -300,13 +302,18 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   />
                 </TouchableOpacity>
               </View>
+              <View style={styles.controlButton}>
+              <TouchableOpacity 
+                      onPress={() => navigation.navigate("Gallery")} 
+                    >
+                      <FontAwesome6 name="images" size={32}
+                      paddingTop={5}
+                    color={theme.colors.darkBlue}
+                    accessible={true}
+                    accessibilityLabel={"your gallery"} />
+                    </TouchableOpacity>
+                    </View>
             </View>
-            <TouchableOpacity 
-                    onPress={() => navigation.navigate("Gallery Screen")} 
-                    style={styles.galleryButtonContainer}
-                  >
-                    <Text style={styles.galleryButton}>my gallery</Text>
-                  </TouchableOpacity>
           </>
         )}
       </View>
@@ -360,7 +367,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     paddingHorizontal: "10%",
-    justifyContent: "space-between",
+    paddingBottom: "10%",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 55,
+    
   },
   controlButton: {
     width: 50,
@@ -376,8 +387,8 @@ const styles = StyleSheet.create({
     top: 20,
   },
   playButton: {
-    width: 50,
-    height: 50,
+    width: 53,
+    height: 53,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 30,
@@ -390,11 +401,6 @@ const styles = StyleSheet.create({
     marginTop: "5%",
     justifyContent: "center",
   },
-  galleryButtonContainer:{
-    alignItems: "center",
-    justifyContent: "center",
-    margin: "10%",
-  }, 
   galleryButton: {
     fontFamily: theme.fonts.karlaLight,
     fontSize: 25,

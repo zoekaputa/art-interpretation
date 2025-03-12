@@ -20,7 +20,8 @@ export default function HomeScreen() {
 
   return (
     <BookmarkProvider>
-      <Stack.Navigator initialRouteName="Camera Screen">
+      <Stack.Navigator initialRouteName="Camera">
+        {/* Camera Screen */}
         <Stack.Screen
           name="Camera"
           component={CameraScreen}
@@ -28,47 +29,63 @@ export default function HomeScreen() {
             headerShown: false,
           })}
         />
+
+        {/* Photo Display Screen */}
         <Stack.Screen
           name="Photo Display"
           component={DisplayPhotoScreen}
-          options={({ navigation }) => ({
-            headerTitle: "",
-            headerLeft: () => (
-              <TouchableOpacity onPress={() => navigation.goBack()}>
-                <FontAwesome6
-                  name="chevron-left"
-                  size={32}
-                  color={theme.colors.black}
-                  style={styles.icon}
-                  accessible={true}
-                  accessibilityLabel="Back to Camera"
-                /> 
-              </TouchableOpacity>
-            ),
-            headerTransparent: true,
-            headerStyle: { backgroundColor: "transparent", elevation: 0, shadowOpacity: 0 },
-          })}
+          options={({ navigation }) => {
+            // Get the previous route name
+            const previousRoute =
+              navigation.getState()?.routes?.slice(-2, -1)[0]?.name || "Previous Page";
+
+            return {
+              headerTitle: "",
+              headerLeft: () => (
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                  <FontAwesome6
+                    name="chevron-left"
+                    size={32}
+                    color={theme.colors.black}
+                    style={styles.icon}
+                    accessible={true}
+                    accessibilityLabel={`Back to ${previousRoute}`}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTransparent: true,
+              headerStyle: { backgroundColor: "transparent", elevation: 0, shadowOpacity: 0 },
+            };
+          }}
         />
+
+        {/* Gallery Screen */}
         <Stack.Screen
           name="Gallery"
           component={GalleryScreen}
-          options={({ navigation }) => ({
-            headerTitle: "",
-            headerLeft: () => (
-              <TouchableOpacity onPress={() => navigation.goBack()}>
-                <FontAwesome6
-                  name="chevron-left"
-                  size={32}
-                  color={theme.colors.black}
-                  style={styles.icon}
-                  accessible={true}
-                  accessibilityLabel={`Back to ${previousRoute}`}
-                /> 
-              </TouchableOpacity>
-            ),
-            headerTransparent: true,
-            headerStyle: { backgroundColor: "transparent", elevation: 0, shadowOpacity: 0 },
-          })}
+          options={({ navigation }) => {
+            // Get the previous route name
+            const previousRoute =
+              navigation.getState()?.routes?.slice(-2, -1)[0]?.name || "Previous Page";
+
+            return {
+              headerTitle: "",
+              headerLeft: () => (
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                  <FontAwesome6
+                    name="chevron-left"
+                    size={32}
+                    color={theme.colors.black}
+                    style={styles.icon}
+                    accessible={true}
+                    accessibilityLabel={`Back to ${previousRoute}`}
+                  />
+                </TouchableOpacity>
+              ),
+              headerTransparent: true,
+              headerStyle: { backgroundColor: "transparent", elevation: 0, shadowOpacity: 0 },
+            };
+          }}
         />
       </Stack.Navigator>
     </BookmarkProvider>
