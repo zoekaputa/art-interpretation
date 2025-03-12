@@ -38,6 +38,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
   const handleBookmark = () => {
     const newBookmark = {
       image: route.params.photo.uri,
+      descriptionText: descriptionText,
       audio: sounds,
       name: artName,
     };
@@ -117,7 +118,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       setIsLoading(false);
     };
 
-    reqSounds();
+    //reqSounds();
   }, []);
 
   useEffect(() => {
@@ -291,11 +292,11 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
               <View style={styles.controlButton}>
                 <TouchableOpacity onPress={handleBookmark}>
                   <FontAwesome6
-                    name={isBookmarked ? "bookmark" : "bookmark"}
+                    name={"bookmark"}
                     size={32}
                     color={theme.colors.darkBlue}
                     accessible={true}
-                    accessibilityLabel="Add to Gallery"
+                    accessibilityLabel={isBookmarked ? "Added to Gallery" : "Add to Gallery"}
                   />
                 </TouchableOpacity>
               </View>
