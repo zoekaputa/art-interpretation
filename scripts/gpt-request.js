@@ -10,7 +10,7 @@ const openai = new OpenAI({
 export async function uploadUrlToDevice(url, name) {
   const response = await axios.get(url, { responseType: "arraybuffer" });
   const buffer = Buffer.from(response.data, "utf-8");
-  const fileUri = await saveBufferToFile(buffer, `${name}.mp4`);
+  const fileUri = await saveBufferToFile(buffer, `${name}.wav`); // used to be mp4
   return fileUri;
 }
 

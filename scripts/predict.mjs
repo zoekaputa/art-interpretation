@@ -22,25 +22,23 @@ app.listen(port, () => {
   console.log(`Server is running on http://10.30.17.242:${port}`); // ipconfig getifaddr en0
 });
 
-const model = await Client.connect(
-  "haoheliu/audioldm-text-to-audio-generation"
-);
+const model = await Client.connect("declare-lab/TangoFlux");
 
 // Create a route and a handler for GET /posts/:id
 app.post("/post", jsonParser, async (req, res) => {
   // Get the id parameter from the request
   try {
     // const msg = await anthropic.messages.create(req.body);
-    const result = await model.predict("/text2audio", [
+    const result = await model.predict("/predict", [
       req.body.description,
-      "low quality, average quality",
+      25,
+      4.5,
       10,
-      3.5,
-      45,
-      1,
     ]);
 
-    const videoUrl = result.data[0].video.url;
+    console.log(result);
+
+    const videoUrl = result.data[0].url;
     console.log(videoUrl);
 
     res.status(200).json(videoUrl);
