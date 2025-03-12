@@ -22,14 +22,14 @@ export default function HomeScreen() {
     <BookmarkProvider>
       <Stack.Navigator initialRouteName="Camera Screen">
         <Stack.Screen
-          name="Camera Screen"
+          name="Camera"
           component={CameraScreen}
           options={() => ({
             headerShown: false,
           })}
         />
         <Stack.Screen
-          name="Photo Display Screen"
+          name="Photo Display"
           component={DisplayPhotoScreen}
           options={({ navigation }) => ({
             headerTitle: "",
@@ -50,7 +50,7 @@ export default function HomeScreen() {
           })}
         />
         <Stack.Screen
-          name="Gallery Screen"
+          name="Gallery"
           component={GalleryScreen}
           options={({ navigation }) => ({
             headerTitle: "",
@@ -62,7 +62,7 @@ export default function HomeScreen() {
                   color={theme.colors.black}
                   style={styles.icon}
                   accessible={true}
-                  accessibilityLabel="Back to Camera"
+                  accessibilityLabel={`Back to ${previousRoute}`}
                 /> 
               </TouchableOpacity>
             ),

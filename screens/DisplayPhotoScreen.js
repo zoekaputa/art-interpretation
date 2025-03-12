@@ -301,6 +301,12 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                 </TouchableOpacity>
               </View>
             </View>
+            <TouchableOpacity 
+                    onPress={() => navigation.navigate("Gallery Screen")} 
+                    style={styles.galleryButtonContainer}
+                  >
+                    <Text style={styles.galleryButton}>my gallery</Text>
+                  </TouchableOpacity>
           </>
         )}
       </View>
@@ -383,5 +389,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: "5%",
     justifyContent: "center",
+  },
+  galleryButtonContainer:{
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "10%",
+  }, 
+  galleryButton: {
+    fontFamily: theme.fonts.karlaLight,
+    fontSize: 25,
+    color: theme.colors.darkBlue,
+    textShadowColor: theme.colors.lightBlue,
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
 });
