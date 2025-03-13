@@ -3,7 +3,7 @@ import {
   useCameraPermissions,
   takePictureAsync,
 } from "expo-camera";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import {
   Button,
   StyleSheet,
@@ -14,6 +14,8 @@ import {
   AccessibilityInfo,
 } from "react-native";
 import { FontAwesome6 } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
+
 import theme from "../theme";
 import { containsArtwork } from "../scripts/gpt-request";
 
@@ -28,20 +30,48 @@ const CameraScreen = ({ route, navigation }) => {
   const [intervalId, setIntervalId] = useState(null);
   const cameraRef = useRef(null);
 
+  useFocusEffect(
+    useCallback(() => {
+      const startChecking = () => {
+        console.log("setting interval1");
+        const intervalId = setInterval(checkContainsArtwork, 5000); // 10 seconds
+        setIntervalId(intervalId);
+      };
+
+      if (isReady && !intervalId) {
+        setTimeout(startChecking);
+      }
+
+      return () => {
+        if (intervalId) {
+          clearInterval(intervalId);
+          setIntervalId(null);
+        }
+      };
+    }, [intervalId])
+  );
+
   useEffect(() => {
     if (!isReady) {
       return;
     }
 
     const startChecking = () => {
+      console.log("setting interval2");
       const intervalId = setInterval(checkContainsArtwork, 5000); // 10 seconds
       setIntervalId(intervalId);
     };
 
-    setTimeout(startChecking);
+    if (!intervalId) {
+      setTimeout(startChecking);
+    }
   }, [isReady]);
 
   useEffect(() => {
+    if (!intervalId) {
+      return;
+    }
+
     if (photoDisabled) {
       AccessibilityInfo.announceForAccessibility(
         "No artwork detected, you can still use the camera button to take a picture."
@@ -85,6 +115,7 @@ const CameraScreen = ({ route, navigation }) => {
   async function takePicture() {
     if (cameraRef.current) {
       clearInterval(intervalId);
+      setIntervalId(null);
       let photo = await cameraRef.current.takePictureAsync({ base64: true });
       navigation.navigate("Photo Display", {
         photo,
@@ -141,17 +172,18 @@ const CameraScreen = ({ route, navigation }) => {
         </View>
       </View>
 
-      
-      <TouchableOpacity 
-        onPress={() => navigation.navigate("Gallery")} 
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Gallery")}
         style={styles.galleryButtonContainer}
       >
-        <FontAwesome6 name="images" size={32}
-                    color={theme.colors.darkBlue}
-                    accessible={true}
-                    accessibilityLabel={"your gallery"} />
+        <FontAwesome6
+          name="images"
+          size={32}
+          color={theme.colors.darkBlue}
+          accessible={true}
+          accessibilityLabel={"your gallery"}
+        />
       </TouchableOpacity>
-      
     </View>
   );
 };
@@ -208,11 +240,11 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     margin: "auto",
   },
-  galleryButtonContainer:{
+  galleryButtonContainer: {
     alignItems: "center",
     justifyContent: "center",
     margin: "10%",
-  }, 
+  },
   modalOverlay: {
     flex: 1,
     justifyContent: "center",

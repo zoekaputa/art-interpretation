@@ -50,7 +50,7 @@ const GalleryScreen = ({ route, navigation }) => {
   }, []);
 
   const playAudio = async (item) => {
-    console.log(item.descriptionText)
+    console.log(item.descriptionText);
     const audioArray = item.audio;
     try {
       if (!audioArray || audioArray.length === 0) return;
@@ -100,14 +100,30 @@ const GalleryScreen = ({ route, navigation }) => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.itemContainer}>
-            <View style={styles.imageContainer} accessible={true} >
-              <Image source={{ uri: item.image }} style={styles.image} accessibilityLabel={item.descriptionText}/>
+            <View style={styles.imageContainer} accessible={true}>
+              <Image
+                source={{ uri: item.image }}
+                style={styles.image}
+                accessibilityLabel={item.descriptionText}
+              />
             </View>
-            <Text style={styles.titleText}>{item.name}</Text>
+            <Text
+              style={styles.titleText}
+              accessible={true}
+              accessibilityLabel={`Title: ${item.name}`}
+            >
+              {item.name}
+            </Text>
             <View style={styles.controlsRow}>
               <TouchableOpacity
                 style={styles.playButton}
                 onPress={() => playAudio(item)}
+                accessible={true}
+                accessibilityLabel={
+                  currentlyPlayingId == item.id
+                    ? `pause ${item.name}`
+                    : `play ${item.name}`
+                }
               >
                 <FontAwesome6
                   name={currentlyPlayingId == item.id ? "pause" : "play"}
@@ -117,8 +133,13 @@ const GalleryScreen = ({ route, navigation }) => {
                 />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => removeBookmark(item.id)}>
-                <FontAwesome6 name={"trash-can"} size={32} color={"red"} accessible={true}
-                    accessibilityLabel={"Remove from gallery"}/>
+                <FontAwesome6
+                  name={"trash-can"}
+                  size={32}
+                  color={"red"}
+                  accessible={true}
+                  accessibilityLabel={`Remove ${item.name} from gallery`}
+                />
               </TouchableOpacity>
             </View>
           </View>
