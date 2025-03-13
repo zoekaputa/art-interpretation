@@ -24,6 +24,11 @@ import MicButton from "../components/MicButton";
 import { useBookmarks } from "./BookmarkContext";
 
 const DisplayPhotoScreen = ({ route, navigation }) => {
+  const defaultAudioFiles = [
+    require("../assets/1.wav"),
+    require("../assets/2.wav"),
+    require("../assets/3.wav"),
+  ];
   const { addBookmark } = useBookmarks();
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -104,8 +109,8 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       setArtName(title);
 
       const newSounds = await Promise.all(
-        descriptions.map(async (desc) => {
-          const sound = await reqSound(desc);
+        descriptions.map(async (desc, i) => {
+          const sound = await reqSound(desc, i);
           return sound;
         })
       );
@@ -118,7 +123,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       setIsLoading(false);
     };
 
-    //reqSounds();
+    reqSounds();
   }, []);
 
   useEffect(() => {
@@ -180,26 +185,40 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
     }
   };
 
-  const reqSound = async (desc) => {
-    const soundUrl = await requestSound(desc);
-    console.log(desc, ":", soundUrl);
-    const localFileUri = await uploadUrlToDevice(soundUrl, desc);
-    const sound = new Audio.Sound();
-    await sound.loadAsync(
-      {
-        uri: localFileUri,
-      },
-      { shouldPlay: true }
-    );
-    await sound.setIsLoopingAsync(true);
-    const status = await sound.getStatusAsync();
-    // setDuration(status.durationMillis);
+  const reqSound = async (desc, index) => {
+    try {
+      const soundUrl = await requestSound(desc);
+      console.log(desc, ":", soundUrl);
 
-    await sound.pauseAsync();
+      if (!soundUrl) {
+        const sound = new Audio.Sound();
+        await sound.loadAsync(defaultAudioFiles[index], {
+          shouldPlay: true,
+          isLooping: true,
+        });
+        return sound;
+      }
 
-    sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+      const localFileUri = await uploadUrlToDevice(soundUrl, desc);
+      const sound = new Audio.Sound();
+      await sound.loadAsync(
+        {
+          uri: localFileUri,
+        },
+        { shouldPlay: true }
+      );
+      await sound.setIsLoopingAsync(true);
+      // const status = await sound.getStatusAsync();
+      // setDuration(status.durationMillis);
 
-    return sound;
+      await sound.pauseAsync();
+
+      sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+
+      return sound;
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const onPlaybackStatusUpdate = (playbackStatus) => {
@@ -298,21 +317,26 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                     size={32}
                     color={theme.colors.darkBlue}
                     accessible={true}
-                    accessibilityLabel={isBookmarked ? "Added to Gallery" : "Add to Gallery"}
+                    accessibilityLabel={
+                      isBookmarked ? "Added to Gallery" : "Add to Gallery"
+                    }
                   />
                 </TouchableOpacity>
               </View>
               <View style={styles.controlButton}>
-              <TouchableOpacity 
-                      onPress={() => navigation.navigate("Gallery")} 
-                    >
-                      <FontAwesome6 name="images" size={32}
-                      paddingTop={5}
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("Gallery")}
+                >
+                  <FontAwesome6
+                    name="images"
+                    size={32}
+                    paddingTop={5}
                     color={theme.colors.darkBlue}
                     accessible={true}
-                    accessibilityLabel={"your gallery"} />
-                    </TouchableOpacity>
-                    </View>
+                    accessibilityLabel={"your gallery"}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
           </>
         )}
@@ -371,7 +395,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 55,
-    
   },
   controlButton: {
     width: 50,

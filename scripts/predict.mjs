@@ -26,6 +26,7 @@ const model = await Client.connect("declare-lab/TangoFlux");
 
 // Create a route and a handler for GET /posts/:id
 app.post("/post", jsonParser, async (req, res) => {
+  console.log("starting");
   // Get the id parameter from the request
   try {
     // const msg = await anthropic.messages.create(req.body);
@@ -43,6 +44,7 @@ app.post("/post", jsonParser, async (req, res) => {
 
     res.status(200).json(videoUrl);
   } catch (error) {
+    console.error(error);
     res.status(400).send(error.message);
   }
 });
