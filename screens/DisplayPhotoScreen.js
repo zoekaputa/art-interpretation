@@ -298,6 +298,8 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   stopLoadingSound={stopLoadingSound}
                   image={route.params.photo.base64}
                   setLoadingSound={setLoadingSound}
+                  isPlaying={isPlaying}
+                  playSounds={playSounds}
                 />
               </View>
               <TouchableOpacity style={styles.playButton} onPress={playSounds}>
