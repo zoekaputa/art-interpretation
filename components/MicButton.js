@@ -28,6 +28,8 @@ const MicButton = ({
   playLoadingSound,
   stopLoadingSound,
   setLoadingSound,
+  isPlaying,
+  playSounds,
 }) => {
   const [permissionResponse, requestPermission] = Audio.usePermissions();
   const [isRecording, setIsRecording] = useState(false);
@@ -63,6 +65,7 @@ const MicButton = ({
       );
 
       await sound.playAsync();
+      return sound;
     } catch (error) {
       console.error(error);
     }
@@ -111,6 +114,10 @@ const MicButton = ({
   }
 
   const startPulsing = async () => {
+    if (isPlaying) {
+      await playSounds();
+    }
+
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: true,
     });
@@ -184,12 +191,22 @@ const MicButton = ({
       })
     );
 
-    await playResponseAudio(response.message);
+    const messageSound = await playResponseAudio(response.message);
+
+    await new Promise((resolve, reject) => {
+      messageSound.setOnPlaybackStatusUpdate((status) => {
+        if (status.positionMillis > status.durationMillis * 0.8) {
+          console.log("Done playing");
+
+          setSounds(newSounds);
+          resolve(true);
+        }
+      });
+    });
 
     await stopLoadingSound(loadingSound);
     setLoadingSound(null);
 
-    setSounds(newSounds);
     setSoundDescriptions(response.descriptions);
 
     setIsLoading(false);

@@ -299,6 +299,8 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   stopLoadingSound={stopLoadingSound}
                   image={route.params.photo.base64}
                   setLoadingSound={setLoadingSound}
+                  isPlaying={isPlaying}
+                  playSounds={playSounds}
                 />
               </View>
               <View style={styles.controlButton}>

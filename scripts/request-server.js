@@ -1,7 +1,7 @@
 export async function requestSound(description) {
   let tryAgain = false;
   do {
-    const response = await fetch(`http://10.30.22.228:3001/post`, {
+    const response = await fetch(`http://10.34.100.195:3001/post`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
