@@ -124,7 +124,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       setIsLoading(false);
     };
 
-    // reqSounds();
+    reqSounds();
   }, []);
 
   useEffect(() => {

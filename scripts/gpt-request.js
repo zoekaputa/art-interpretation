@@ -268,7 +268,7 @@ export async function getAltText(base64Img) {
           content: [
             {
               type: "text",
-              text: "You are an expert at coming up with short alt text descirptions for paintings. You focus on the visuals in the scene.",
+              text: "You are an expert at coming up with short alt text descirptions for paintings. You focus on the visuals in the scene and the aritistic style of the work.",
             },
           ],
         },
