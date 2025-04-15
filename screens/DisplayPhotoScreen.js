@@ -186,9 +186,24 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
     }
   };
 
+  const requestSoundLocal = async (query) => {
+    const response = await fetch(
+      `https://freesound.org/apiv2/search/text/?query=${query}&token=${process.env.EXPO_PUBLIC_FREE_SOUND_API_KEY}`
+    );
+    const data = await response.json();
+    const id = data.results[0].id;
+
+    const soundResponse = await fetch(
+      `https://freesound.org/apiv2/sounds/${id}/?token=${process.env.EXPO_PUBLIC_FREE_SOUND_API_KEY}`
+    );
+    const soundData = await soundResponse.json();
+    console.log(soundData.previews["preview-hq-mp3"]);
+    return soundData.previews["preview-hq-mp3"];
+  };
+
   const reqSound = async (desc, index) => {
     try {
-      const soundUrl = await requestSound(desc);
+      const soundUrl = await requestSoundLocal(desc);
       console.log(desc, ":", soundUrl);
 
       if (!soundUrl) {
@@ -303,8 +318,8 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   playSounds={playSounds}
                 />
               </View>
-              <View style={styles.controlButton}>
-                {/* Speech to Text Button */}
+              {/*<View style={styles.controlButton}>
+                {/* Speech to Text Button 
                 <ChangeAltTextButton
                   altText={descriptionText}
                   setAltText={setDescriptionText}
@@ -319,7 +334,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   image={route.params.photo.base64}
                   setLoadingSound={setLoadingSound}
                 />
-              </View>
+              </View>*/}
               <TouchableOpacity style={styles.playButton} onPress={playSounds}>
                 <FontAwesome6
                   name={isPlaying ? "pause" : "play"}
