@@ -96,11 +96,11 @@ export async function requestSoundDescriptions(base64Img) {
             {
               type: "text",
               text: `Given a picture of a painting you are an expert in creating artwork descriptions. The user wants to create a soundscape representing the painting
-                        using an AI description to sound effect tool. You give them a list of 3 INCREDIBLY SIMPLE sound effects descriptions (like 2-3 words) that they would need to make a representative
-                        the visual foreground, middle-ground, and background of the image in a soundscape. The descriptions should be so simple that if I query https://freesound.org/'s 
-                        database for them, I should get results. You return a json of in the form
+                        using a description to sound effect database (https://freesound.org/). You give them a list of around 5 INCREDIBLY SIMPLE sound effects descriptions
+                        (like 2-3 words) that they would need to make a representative soundscape describing the scene of the artwork. The descriptions should be so simple
+                        that if I query https://freesound.org/'s database for them, I should get results. You return a json of in the form
                         {
-                          elements: [<foreground>,<middle-ground>,<background>]
+                          elements: [<element1>,<element2>,<element3>,...,<elementn>]
                         }`,
             },
           ],
