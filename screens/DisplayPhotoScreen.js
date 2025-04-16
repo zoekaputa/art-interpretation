@@ -21,7 +21,6 @@ import {
   getTitle,
 } from "../scripts/gpt-request";
 import MicButton from "../components/MicButton";
-import ChangeAltTextButton from "../components/ChangeAltText";
 import { useBookmarks } from "./BookmarkContext";
 
 const DisplayPhotoScreen = ({ route, navigation }) => {
@@ -318,23 +317,6 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   playSounds={playSounds}
                 />
               </View>
-              {/*<View style={styles.controlButton}>
-                {/* Speech to Text Button 
-                <ChangeAltTextButton
-                  altText={descriptionText}
-                  setAltText={setDescriptionText}
-                  descriptions={soundDescriptions}
-                  sounds={sounds}
-                  setSounds={setSounds}
-                  reqSound={reqSound}
-                  setSoundDescriptions={setSoundDescriptions}
-                  setIsLoading={setIsLoading}
-                  playLoadingSound={playLoadingSound}
-                  stopLoadingSound={stopLoadingSound}
-                  image={route.params.photo.base64}
-                  setLoadingSound={setLoadingSound}
-                />
-              </View>*/}
               <TouchableOpacity style={styles.playButton} onPress={playSounds}>
                 <FontAwesome6
                   name={isPlaying ? "pause" : "play"}

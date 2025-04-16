@@ -269,7 +269,7 @@ export async function getAltText(base64Img) {
           content: [
             {
               type: "text",
-              text: "You are an expert at coming up with short alt text descirptions for paintings. You focus on the visuals in the scene and the aritistic style of the work.",
+              text: "You are an expert at coming up with short alt text descirptions for paintings. You focus on the visuals in the scene and the aritistic style of the work. If you recognize the piece of artwork, also provide the artwork's title, the artist, and the time period its from.",
             },
           ],
         },
@@ -293,70 +293,6 @@ export async function getAltText(base64Img) {
     });
     const responseText = result.choices[0].message.content;
     return responseText;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export async function requestAltTextUpdate(
-  altText,
-  descriptions,
-  userMessage,
-  base64Img
-) {
-  try {
-    const result = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: [
-            {
-              type: "text",
-              text: `Given a picture of a painting, an existing alt text description, descriptions of this painting's forground, middle-ground, and background, and a user message you are an expert in
-                        updating the artwork's description based on the user's request. You directly
-                        address the concerns layed out in their message by updating the text description. Here is the text description: ${altText}. Tell them that you updated the alt text description.
-                        
-                        Based on your updated alt text description, determine whether the descriptions of the painting's forground, middle-ground, and background need to be updated. You directly
-                        update one or more of descriptions and give them a short explanation.
-
-                        In your updated list of descriptions,
-                        each should be a 3 VERY SIMPLE sound effect description. You return a json of in the form
-                        {
-                          message: <message explaining that you changed. Do not refer to the array of descriptions directly>,
-                          altText: <updated alt text description>,
-                          descriptions: [<foreground>,<middle-ground>,<background>]
-                        }
-                          
-                        current descriptions: ${descriptions}`,
-            },
-          ],
-        },
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: `User's message: ${userMessage}`,
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:image/jpeg;base64,${base64Img}`,
-                detail: "high",
-              },
-            },
-          ],
-        },
-      ],
-    });
-    const responseText = result.choices[0].message.content;
-    const startIndex = responseText.indexOf("{");
-    const endIndex = responseText.indexOf("}");
-    const cutString = responseText.substring(startIndex, endIndex + 1);
-    const jsonResponse = JSON.parse(cutString);
-
-    return { ...jsonResponse, oldDescriptions: descriptions };
   } catch (error) {
     console.log(error);
   }
