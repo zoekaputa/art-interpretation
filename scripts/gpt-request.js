@@ -99,10 +99,12 @@ export async function requestSoundDescriptions(base64Img) {
                         using a description to sound effect database (https://freesound.org/). You give them a list of around 5 INCREDIBLY SIMPLE sound effects descriptions
                         (like 2-3 words) that they would need to make a representative soundscape describing the scene of the artwork. The descriptions should be so simple
                         that if I query https://freesound.org/'s database for them, I should get results. For each description, based on its relevance in the photo, provide a 
-                        corresponding volume. Expo-av reads volume from a scale between 0 (silence) and 1 (maximum volume). Provide an appropriate volume for each description.
+                        corresponding volume, whether it should loop, an interval if there is a loop (milliseconds between repeats), whether should fade in, whether it should fade out, and 
+                        whether it should have a delayed start (milliseconds before starting). Expo-av reads volume from a scale between 0 (silence) and 1 (maximum volume). Complete the following fields for 
+                        each description. 
                         You return a json of in the form
                         {
-                          elements: [<"element": element1, "volume":volume1>,<"element": element2, "volume":volume2>,<"element": element3, "volume":volume3>,...,<"element":elementn, "volume":volumen>]
+                          elements: [<"element": element1, "volume": volume1, "loop": boolean, "interval": interval1, "fadeIn": boolean, "fadeOut": boolean, "startDelay": boolean>, <"element": element2, "volume": volume2, "loop": boolean, "interval": interval2, "fadeIn": boolean, "fadeOut": boolean, "startDelay": boolean>, ...]
                         }`,
             },
           ],
