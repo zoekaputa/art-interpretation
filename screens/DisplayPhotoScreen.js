@@ -103,7 +103,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
           interval: 2000,
           loop: true,
           startDelay: 0,
-          volume: 0.1,
+          volume: 1,
         },
         {
           element: "footsteps",
@@ -112,7 +112,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
           interval: 0,
           loop: false,
           startDelay: 2000,
-          volume: 1,
+          volume: 0.5,
         },
       ]; // await requestSoundDescriptions(
       //   route.params.photo.base64
@@ -123,10 +123,6 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
 
       const descText = await getAltText(route.params.photo.base64);
       setDescriptionText(descText);
-      await playDescriptionAudio(
-        descText +
-          "Mosaic is still generating the audio for your artpiece. Please wait while we compose your soundscape experience."
-      );
 
       const title = await getTitle(route.params.photo.base64);
       setArtName(title);
@@ -147,11 +143,25 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       await stopLoadingSound(loadingSound);
       setLoadingSound(null);
 
-      setSounds(
-        newSounds.map((s) => {
-          return { sound: s, timeout: null };
-        })
+      const descriptionAudio = await playDescriptionAudio(
+        descText +
+          "Mosaic is still generating the audio for your artpiece. Please wait while we compose your soundscape experience."
       );
+      descriptionAudio.setOnPlaybackStatusUpdate((playbackStatus) => {
+        if (playbackStatus.didJustFinish) {
+          setSounds(
+            newSounds.map((s, i) => {
+              return {
+                sound: s,
+                timeout: null,
+                fadeIn: descriptions[i].fadeIn,
+                fadeOut: descriptions[i].fadeOut,
+                volume: descriptions[i].volume,
+              };
+            })
+          );
+        }
+      });
 
       setIsLoading(false);
     };
@@ -189,6 +199,17 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
     }
   };
 
+  const fadeVolume = async (sound, from, to, duration) => {
+    const steps = 10;
+    const stepTime = duration / steps;
+    const volumeStep = (to - from) / Steps;
+
+    for (let i = 0; i <= steps; i++) {
+      await sound.setVolumeAsync(from + i * volumeStep);
+      await new Promise((res) => setTimeout(res, stepTime));
+    }
+  };
+
   const stopLoadingSound = async (loadingSound) => {
     try {
       if (loadingSound) {
@@ -213,6 +234,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       );
 
       await sound.playAsync();
+      return sound;
     } catch (error) {
       console.error(error);
     }
@@ -275,6 +297,12 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
     function playbackFunction(playbackStatus) {
       async function timeoutFunction() {
         await soundsRef.current[index].sound.replayAsync();
+        fadeVolume(
+          soundsRef.current[index],
+          0,
+          soundsRef.current[index].volume,
+          5000
+        );
         soundsRef.current[index].timeout = null;
       }
       setTimeEllapsed(playbackStatus.positionMillis);
@@ -304,6 +332,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         }
       } else {
         sound.sound.playAsync();
+        fadeVolume(sound, 0, sound.volume, 5000);
         setIsPlaying(true);
 
         if (sound.timeout) {
