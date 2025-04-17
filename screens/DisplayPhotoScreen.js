@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   Text,
   StyleSheet,
@@ -22,6 +22,7 @@ import {
 } from "../scripts/gpt-request";
 import MicButton from "../components/MicButton";
 import { useBookmarks } from "./BookmarkContext";
+import PauseableTimeout from "../components/PauseableTimeout";
 
 const DisplayPhotoScreen = ({ route, navigation }) => {
   const defaultAudioFiles = [
@@ -39,6 +40,9 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
   const [descriptionText, setDescriptionText] = useState(null);
   const [artName, setArtName] = useState(null);
   const [loadingSound, setLoadingSound] = useState(null);
+
+  const soundsRef = useRef(sounds);
+  soundsRef.current = sounds;
 
   const handleBookmark = () => {
     const newBookmark = {
@@ -66,7 +70,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
 
         sounds.forEach((sound) => {
           if (isPlaying) {
-            sound.pauseAsync();
+            sound.sound.pauseAsync();
             setIsPlaying(false);
           }
         });
@@ -91,9 +95,28 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         playsInSilentModeIOS: true,
       });
 
-      const descriptions = await requestSoundDescriptions(
-        route.params.photo.base64
-      );
+      const descriptions = [
+        {
+          element: "birds chirping",
+          fadeIn: true,
+          fadeOut: false,
+          interval: 2000,
+          loop: true,
+          startDelay: 0,
+          volume: 0.1,
+        },
+        {
+          element: "footsteps",
+          fadeIn: true,
+          fadeOut: true,
+          interval: 0,
+          loop: false,
+          startDelay: 2000,
+          volume: 1,
+        },
+      ]; // await requestSoundDescriptions(
+      //   route.params.photo.base64
+      // );
 
       console.log(descriptions);
       setSoundDescriptions(descriptions);
@@ -109,16 +132,26 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       setArtName(title);
 
       const newSounds = await Promise.all(
-        descriptions.map(async ({ element, volume }, i) => {
-          const loadedSound = await reqSound(element, i, volume);
+        descriptions.map(async ({ element, volume, loop, interval }, i) => {
+          const loadedSound = await reqSound(
+            element,
+            i,
+            volume,
+            loop,
+            interval
+          );
           return loadedSound;
         })
-      );      
+      );
 
       await stopLoadingSound(loadingSound);
       setLoadingSound(null);
 
-      setSounds(newSounds);
+      setSounds(
+        newSounds.map((s) => {
+          return { sound: s, timeout: null };
+        })
+      );
 
       setIsLoading(false);
     };
@@ -132,7 +165,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
     const updatePostions = async () => {
       await Promise.all(
         sounds.map(async (sound) => {
-          await sound.setPositionAsync(timeEllapsed);
+          await sound.sound.setPositionAsync(timeEllapsed);
         })
       );
 
@@ -163,7 +196,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         await loadingSound.unloadAsync();
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error stopping loading sound:", error);
     }
   };
 
@@ -200,16 +233,18 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
     return soundData.previews["preview-hq-mp3"];
   };
 
-  const reqSound = async (desc, index, volume = 1) => {
+  const reqSound = async (desc, index, volume, loop, interval) => {
     try {
       const soundUrl = await requestSoundLocal(desc);
       console.log(desc, ":", soundUrl);
+
+      const setLoop = loop && interval !== 0;
 
       if (!soundUrl) {
         const sound = new Audio.Sound();
         await sound.loadAsync(defaultAudioFiles[index], {
           shouldPlay: true,
-          isLooping: true,
+          isLooping: setLoop,
           volume,
         });
         return sound;
@@ -223,22 +258,35 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         },
         { shouldPlay: true }
       );
-      await sound.setIsLoopingAsync(true);
-      // const status = await sound.getStatusAsync();
-      // setDuration(status.durationMillis);
+      await sound.setIsLoopingAsync(setLoop);
+      await sound.setVolumeAsync(volume);
 
       await sound.pauseAsync();
 
-      sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+      sound.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate(index, interval));
 
       return sound;
     } catch (error) {
-      console.error(error);
+      console.error("Error making sound", error);
     }
   };
 
-  const onPlaybackStatusUpdate = (playbackStatus) => {
-    setTimeEllapsed(playbackStatus.positionMillis);
+  const onPlaybackStatusUpdate = (index, interval) => {
+    function playbackFunction(playbackStatus) {
+      async function timeoutFunction() {
+        await soundsRef.current[index].sound.replayAsync();
+        soundsRef.current[index].timeout = null;
+      }
+      setTimeEllapsed(playbackStatus.positionMillis);
+
+      if (playbackStatus.didJustFinish && !playbackStatus.isLooping) {
+        soundsRef.current[index].timeout = new PauseableTimeout(
+          timeoutFunction,
+          interval
+        );
+      }
+    }
+    return playbackFunction;
   };
 
   const playSounds = () => {
@@ -248,11 +296,19 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
 
     sounds.forEach((sound) => {
       if (isPlaying) {
-        sound.pauseAsync();
+        sound.sound.pauseAsync();
         setIsPlaying(false);
+
+        if (sound.timeout) {
+          sound.timeout.pause();
+        }
       } else {
-        sound.playAsync();
+        sound.sound.playAsync();
         setIsPlaying(true);
+
+        if (sound.timeout) {
+          sound.timeout.play();
+        }
       }
     });
   };
