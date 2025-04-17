@@ -98,9 +98,11 @@ export async function requestSoundDescriptions(base64Img) {
               text: `Given a picture of a painting you are an expert in creating artwork descriptions. The user wants to create a soundscape representing the painting
                         using a description to sound effect database (https://freesound.org/). You give them a list of around 5 INCREDIBLY SIMPLE sound effects descriptions
                         (like 2-3 words) that they would need to make a representative soundscape describing the scene of the artwork. The descriptions should be so simple
-                        that if I query https://freesound.org/'s database for them, I should get results. You return a json of in the form
+                        that if I query https://freesound.org/'s database for them, I should get results. For each description, based on its relevance in the photo, provide a 
+                        corresponding volume. Expo-av reads volume from a scale between 0 (silence) and 1 (maximum volume). Provide an appropriate volume for each description.
+                        You return a json of in the form
                         {
-                          elements: [<element1>,<element2>,<element3>,...,<elementn>]
+                          elements: [<"element": element1, "volume":volume1>,<"element": element2, "volume":volume2>,<"element": element3, "volume":volume3>,...,<"element":elementn, "volume":volumen>]
                         }`,
             },
           ],
@@ -123,15 +125,24 @@ export async function requestSoundDescriptions(base64Img) {
         },
       ],
     });
-    console.log("result", result);
     const responseText = result.choices[0].message.content;
     console.log("responseText", responseText);
-    const startIndex = responseText.indexOf("{");
-    const endIndex = responseText.indexOf("}");
-    const cutString = responseText.substring(startIndex, endIndex + 1);
-    return JSON.parse(cutString).elements;
+
+    // Try to extract the JSON from inside a ```json ... ``` block
+    const match = responseText.match(/```json([\s\S]*?)```/);
+    const jsonString = match ? match[1].trim() : null;
+
+    if (!jsonString) {
+      throw new Error("Failed to extract JSON block from response");
+    }
+
+    const parsed = JSON.parse(jsonString);
+    console.log("parsed elements", parsed.elements);
+
+    return parsed.elements;
   } catch (error) {
-    console.log(error);
+    console.error("Error in requestSoundDescriptions:", error);
+    return [];
   }
 }
 

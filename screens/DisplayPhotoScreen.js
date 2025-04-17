@@ -109,11 +109,11 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       setArtName(title);
 
       const newSounds = await Promise.all(
-        descriptions.map(async (desc, i) => {
-          const sound = await reqSound(desc, i);
-          return sound;
+        descriptions.map(async ({ element, volume }, i) => {
+          const loadedSound = await reqSound(element, i, volume);
+          return loadedSound;
         })
-      );
+      );      
 
       await stopLoadingSound(loadingSound);
       setLoadingSound(null);
@@ -200,7 +200,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
     return soundData.previews["preview-hq-mp3"];
   };
 
-  const reqSound = async (desc, index) => {
+  const reqSound = async (desc, index, volume = 1) => {
     try {
       const soundUrl = await requestSoundLocal(desc);
       console.log(desc, ":", soundUrl);
@@ -210,6 +210,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         await sound.loadAsync(defaultAudioFiles[index], {
           shouldPlay: true,
           isLooping: true,
+          volume,
         });
         return sound;
       }
