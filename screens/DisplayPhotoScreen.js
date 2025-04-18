@@ -6,6 +6,8 @@ import {
   View,
   ActivityIndicator,
   TouchableOpacity,
+  Modal,
+  Button,
 } from "react-native";
 import { Audio } from "expo-av";
 import { FontAwesome6, Feather } from "@expo/vector-icons";
@@ -40,6 +42,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
   const [descriptionText, setDescriptionText] = useState(null);
   const [artName, setArtName] = useState(null);
   const [loadingSound, setLoadingSound] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const soundsRef = useRef(sounds);
   soundsRef.current = sounds;
@@ -95,28 +98,9 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         playsInSilentModeIOS: true,
       });
 
-      const descriptions = [
-        {
-          element: "birds chirping",
-          fadeIn: true,
-          fadeOut: false,
-          interval: 2000,
-          loop: true,
-          startDelay: 0,
-          volume: 1,
-        },
-        {
-          element: "footsteps",
-          fadeIn: true,
-          fadeOut: true,
-          interval: 0,
-          loop: false,
-          startDelay: 2000,
-          volume: 0.5,
-        },
-      ]; // await requestSoundDescriptions(
-      //   route.params.photo.base64
-      // );
+      const descriptions = await requestSoundDescriptions(
+        route.params.photo.base64
+      );
 
       console.log(descriptions);
       setSoundDescriptions(descriptions);
@@ -128,16 +112,18 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       setArtName(title);
 
       const newSounds = await Promise.all(
-        descriptions.map(async ({ element, volume, loop, interval }, i) => {
-          const loadedSound = await reqSound(
-            element,
-            i,
-            volume,
-            loop,
-            interval
-          );
-          return loadedSound;
-        })
+        descriptions.map(
+          async ({ element, volume, loop, interval, fadeIn }, i) => {
+            const loadedSound = await reqSound(
+              element,
+              i,
+              fadeIn ? 0 : volume,
+              loop,
+              interval
+            );
+            return loadedSound;
+          }
+        )
       );
 
       await stopLoadingSound(loadingSound);
@@ -199,15 +185,31 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
     }
   };
 
+  const fadeVolumeHelper = async (
+    i,
+    sound,
+    steps,
+    volumeStep,
+    stepTime,
+    from
+  ) => {
+    setTimeout(async function () {
+      await sound.sound.setVolumeAsync(from + i * volumeStep);
+      if (i + 1 < steps) {
+        await fadeVolumeHelper(i + 1, sound, steps, volumeStep, stepTime, from);
+      }
+    }, stepTime);
+  };
+
   const fadeVolume = async (sound, from, to, duration) => {
     const steps = 10;
     const stepTime = duration / steps;
-    const volumeStep = (to - from) / Steps;
+    const volumeStep = (to - from) / steps;
+    console.log(volumeStep);
 
-    for (let i = 0; i <= steps; i++) {
-      await sound.setVolumeAsync(from + i * volumeStep);
-      await new Promise((res) => setTimeout(res, stepTime));
-    }
+    await fadeVolumeHelper(0, sound, steps, volumeStep, stepTime, from);
+
+    console.log("done");
   };
 
   const stopLoadingSound = async (loadingSound) => {
@@ -260,7 +262,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       const soundUrl = await requestSoundLocal(desc);
       console.log(desc, ":", soundUrl);
 
-      const setLoop = loop && interval !== 0;
+      const setLoop = loop && interval === 0;
 
       if (!soundUrl) {
         const sound = new Audio.Sound();
@@ -289,7 +291,8 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
 
       return sound;
     } catch (error) {
-      console.error("Error making sound", error);
+      setIsModalVisible(true);
+      // console.error("Error making sound", error);
     }
   };
 
@@ -297,12 +300,14 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
     function playbackFunction(playbackStatus) {
       async function timeoutFunction() {
         await soundsRef.current[index].sound.replayAsync();
-        fadeVolume(
-          soundsRef.current[index],
-          0,
-          soundsRef.current[index].volume,
-          5000
-        );
+        if (soundsRef.current[index].fadeIn) {
+          fadeVolume(
+            soundsRef.current[index],
+            0,
+            soundsRef.current[index].volume,
+            5000
+          );
+        }
         soundsRef.current[index].timeout = null;
       }
       setTimeEllapsed(playbackStatus.positionMillis);
@@ -332,7 +337,9 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         }
       } else {
         sound.sound.playAsync();
-        fadeVolume(sound, 0, sound.volume, 5000);
+        if (sound.fadeIn) {
+          fadeVolume(sound, 0, sound.volume, 5000);
+        }
         setIsPlaying(true);
 
         if (sound.timeout) {
@@ -348,6 +355,20 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       keyboardDismissMode="on-drag"
     >
       <View style={styles.container}>
+        <Modal visible={isModalVisible} transparent={true} animationType="fade">
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalText}>
+                Mosaic cannot complete your request because too many sounds are
+                being requested at the moment. Please try again in a moment.
+              </Text>
+              <Button
+                title="Continue"
+                onPress={() => setIsModalVisible(false)}
+              />
+            </View>
+          </View>
+        </Modal>
         <View
           style={styles.imageContainer}
           accessible={true}
@@ -451,6 +472,28 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
 export default DisplayPhotoScreen;
 
 const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContainer: {
+    width: "80%",
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+  modalText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 20,
+  },
   container: {
     flex: 1,
     justifyContent: "flex-start",
