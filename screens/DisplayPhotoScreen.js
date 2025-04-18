@@ -205,11 +205,8 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
     const steps = 10;
     const stepTime = duration / steps;
     const volumeStep = (to - from) / steps;
-    console.log(volumeStep);
 
     await fadeVolumeHelper(0, sound, steps, volumeStep, stepTime, from);
-
-    console.log("done");
   };
 
   const stopLoadingSound = async (loadingSound) => {
