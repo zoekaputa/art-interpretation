@@ -126,31 +126,30 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         )
       );
 
-      await stopLoadingSound(loadingSound);
-      setLoadingSound(null);
-
       const descriptionAudio = await playDescriptionAudio(
-        descText +
-          "Mosaic is still generating the audio for your artpiece. Please wait while we compose your soundscape experience."
+        descText + "Mosaic is still generating the audio for your artpiece. Please wait while we compose your soundscape experience."
       );
-      descriptionAudio.setOnPlaybackStatusUpdate((playbackStatus) => {
-        if (playbackStatus.didJustFinish) {
-          setSounds(
-            newSounds.map((s, i) => {
-              return {
-                sound: s,
-                timeout: null,
-                fadeIn: descriptions[i].fadeIn,
-                fadeOut: descriptions[i].fadeOut,
-                volume: descriptions[i].volume,
-              };
-            })
-          );
-        }
-      });
+    
+    descriptionAudio.setOnPlaybackStatusUpdate(async (playbackStatus) => {
+      if (playbackStatus.didJustFinish) {
+        await stopLoadingSound(loadingSound);
+        setLoadingSound(null);
 
-      setIsLoading(false);
-    };
+        const wrappedSounds = newSounds.map((s, i) => {
+          return {
+            sound: s,
+            timeout: null,
+            fadeIn: descriptions[i].fadeIn,
+            fadeOut: descriptions[i].fadeOut,
+            volume: descriptions[i].volume,
+          };
+        });
+
+        setSounds(wrappedSounds);
+        setIsLoading(false);
+      }
+    });
+  };
 
     reqSounds();
   }, []);
@@ -229,7 +228,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         {
           uri: audioFile,
         },
-        { shouldPlay: true }
+        { shouldPlay: false }
       );
 
       await sound.playAsync();
@@ -264,7 +263,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       if (!soundUrl) {
         const sound = new Audio.Sound();
         await sound.loadAsync(defaultAudioFiles[index], {
-          shouldPlay: true,
+          shouldPlay: false,
           isLooping: setLoop,
           volume,
         });
@@ -277,7 +276,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         {
           uri: localFileUri,
         },
-        { shouldPlay: true }
+        { shouldPlay: false }
       );
       await sound.setIsLoopingAsync(setLoop);
       await sound.setVolumeAsync(volume);
@@ -329,7 +328,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         sound.sound.pauseAsync();
         setIsPlaying(false);
 
-        if (sound.timeout) {
+        if (sound.timeout && typeof sound.timeout.pause === "function") {
           sound.timeout.pause();
         }
       } else {
@@ -339,7 +338,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         }
         setIsPlaying(true);
 
-        if (sound.timeout) {
+        if (sound.timeout && typeof sound.timeout.play === "function") {
           sound.timeout.play();
         }
       }

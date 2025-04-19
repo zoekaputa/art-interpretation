@@ -186,7 +186,13 @@ const MicButton = ({
           return sounds[i];
         } else {
           await sounds[i].unloadAsync();
-          return await reqSound(desc);
+          return await reqSound(
+            desc.element,
+            i,
+            desc.fadeIn ? 0 : desc.volume,
+            desc.loop,
+            desc.interval
+          );
         }
       })
     );

@@ -162,18 +162,17 @@ export async function requestSoundDescriptionUpdate(
           content: [
             {
               type: "text",
-              text: `Given a picture of a painting, existing descriptions of this painting's forground, middle-ground, and background, and a user message you are an expert in
-                        updating the artwork's descriptions based on the user's request. You directly
-                        address the concerns layed out in their message by updating one or more description and giving then a short explanation. In your list of descriptions,
-                        each shopuld be a 3 VERY SIMPLE sound effect description. You return a json of in the form
+              text: `You are an expert in updating the artwork's soundscape based on the user's request. Given a picture of a painting, a user message, a description of the painting, and existing sounds from a soundscape and their settings in the following format, 
                         {
-                          message: <message explaining what you changed. Do not refer to the array of descriptions directly>,
-                          descriptions: [<foreground>,<middle-ground>,<background>]
+                          elements: [<"element": element1, "volume": volume1, "loop": boolean, "interval": interval1, "fadeIn": boolean, "fadeOut": boolean, "startDelay": boolean>, <"element": element2, "volume": volume2, "loop": boolean, "interval": interval2, "fadeIn": boolean, "fadeOut": boolean, "startDelay": boolean>, ...]
                         }
+                        where each element is a 2-3 description of a sound effect. 
+                        You directly address the concerns layed out in their message by deciding which sounds need to be updated, and updating one or more settings. You can also add new sounds or remove existing sounds.
+                        Modify and return the json in the same format as above. 
 
-                        If the user's request does not warrent a change, tell them in the message you didn't change anything and keep the descriptions the same.
+                        If the user's request does not warrent a change, tell them in the message you didn't change anything and keep the json the same.
                           
-                        current descriptions: ${descriptions}`,
+                        current json: ${descriptions}`,
             },
           ],
         },
@@ -282,7 +281,7 @@ export async function getAltText(base64Img) {
           content: [
             {
               type: "text",
-              text: "You are an expert at coming up with short alt text descirptions for paintings. You focus on the visuals in the scene and the aritistic style of the work. If you recognize the piece of artwork, also provide the artwork's title, the artist, and the time period its from.",
+              text: "You are an expert at coming up with short alt text descirptions for paintings. You focus on the visuals in the scene and the aritistic style of the work. If you recognize the piece of artwork, also provide the artwork's title, the artist, and the time period its from. Respond as if you were presenting this art to someone who is touring a museum.",
             },
           ],
         },
@@ -305,6 +304,7 @@ export async function getAltText(base64Img) {
       ],
     });
     const responseText = result.choices[0].message.content;
+    console.log("responseText", responseText);
     return responseText;
   } catch (error) {
     console.log(error);
