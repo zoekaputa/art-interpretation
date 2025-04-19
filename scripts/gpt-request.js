@@ -164,15 +164,18 @@ export async function requestSoundDescriptionUpdate(
               type: "text",
               text: `You are an expert in updating the artwork's soundscape based on the user's request. Given a picture of a painting, a user message, a description of the painting, and existing sounds from a soundscape and their settings in the following format, 
                         {
+                          message: <message to the user>,
                           elements: [<"element": element1, "volume": volume1, "loop": boolean, "interval": interval1, "fadeIn": boolean, "fadeOut": boolean, "startDelay": boolean>, <"element": element2, "volume": volume2, "loop": boolean, "interval": interval2, "fadeIn": boolean, "fadeOut": boolean, "startDelay": boolean>, ...]
                         }
-                        where each element is a 2-3 description of a sound effect. 
+                        where each element corresponds (by index) to a sound description. 
                         You directly address the concerns layed out in their message by deciding which sounds need to be updated, and updating one or more settings. You can also add new sounds or remove existing sounds.
                         Only modify the sounds the user requests you to change. Return the new json in the same format as above. 
 
                         If the user's request does not warrent a change, tell them in the message you didn't change anything and keep the json the same.
                           
-                        current json: ${descriptions}`,
+                        current sound descriptions: ${JSON.stringify(
+                          descriptions
+                        )}`,
             },
           ],
         },
@@ -202,7 +205,7 @@ export async function requestSoundDescriptionUpdate(
     const jsonResponse = JSON.parse(jsonMatch[0]);
     console.log("updated response", jsonResponse);
 
-    return { ...jsonResponse, oldDescriptions: descriptions };
+    return jsonResponse;
   } catch (error) {
     console.log(error);
   }

@@ -126,30 +126,28 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         )
       );
 
-      const descriptionAudio = await playDescriptionAudio(
-        descText
-      );
-    
-    descriptionAudio.setOnPlaybackStatusUpdate(async (playbackStatus) => {
-      if (playbackStatus.didJustFinish) {
-        await stopLoadingSound(loadingSound);
-        setLoadingSound(null);
+      const descriptionAudio = await playDescriptionAudio(descText);
 
-        const wrappedSounds = newSounds.map((s, i) => {
-          return {
-            sound: s,
-            timeout: null,
-            fadeIn: descriptions[i].fadeIn,
-            fadeOut: descriptions[i].fadeOut,
-            volume: descriptions[i].volume,
-          };
-        });
+      descriptionAudio.setOnPlaybackStatusUpdate(async (playbackStatus) => {
+        if (playbackStatus.didJustFinish) {
+          await stopLoadingSound(loadingSound);
+          setLoadingSound(null);
 
-        setSounds(wrappedSounds);
-        setIsLoading(false);
-      }
-    });
-  };
+          const wrappedSounds = newSounds.map((s, i) => {
+            return {
+              sound: s,
+              timeout: null,
+              fadeIn: descriptions[i].fadeIn,
+              fadeOut: descriptions[i].fadeOut,
+              volume: descriptions[i].volume,
+            };
+          });
+
+          setSounds(wrappedSounds);
+          setIsLoading(false);
+        }
+      });
+    };
 
     reqSounds();
   }, []);

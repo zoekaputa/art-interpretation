@@ -173,7 +173,7 @@ const MicButton = ({
     opacityAnim.setValue(1);
     const audioFile = await recording.getURI();
     const transcription = await getTranscription(audioFile);
-    console.log(descriptions);
+    console.log(transcription);
     const response = await requestSoundDescriptionUpdate(
       descriptions,
       transcription,
@@ -181,9 +181,9 @@ const MicButton = ({
     );
 
     const newSounds = await Promise.all(
-      response.descriptions.map(async (desc, i) => {
+      response.elements.map(async (desc, i) => {
         const old = descriptions[i];
-    
+
         if (
           desc.element === old.element &&
           desc.volume === old.volume &&
@@ -192,7 +192,7 @@ const MicButton = ({
           desc.fadeIn === old.fadeIn &&
           desc.fadeOut === old.fadeOut
         ) {
-          return sounds[i];
+          return sounds[i].sound;
         } else {
           await sounds[i].sound.unloadAsync();
           return await reqSound(
@@ -205,7 +205,16 @@ const MicButton = ({
         }
       })
     );
-    
+
+    const wrappedSounds = newSounds.map((s, i) => {
+      return {
+        sound: s,
+        timeout: null,
+        fadeIn: response.elements[i].fadeIn,
+        fadeOut: response.elements[i].fadeOut,
+        volume: response.elements[i].volume,
+      };
+    });
 
     const messageSound = await playResponseAudio(response.message);
 
@@ -214,7 +223,7 @@ const MicButton = ({
         if (status.positionMillis > status.durationMillis * 0.8) {
           console.log("Done playing");
 
-          setSounds(newSounds);
+          setSounds(wrappedSounds);
           resolve(true);
         }
       });
