@@ -168,7 +168,7 @@ export async function requestSoundDescriptionUpdate(
                         }
                         where each element is a 2-3 description of a sound effect. 
                         You directly address the concerns layed out in their message by deciding which sounds need to be updated, and updating one or more settings. You can also add new sounds or remove existing sounds.
-                        Modify and return the json in the same format as above. 
+                        Only modify the sounds the user requests you to change. Return the new json in the same format as above. 
 
                         If the user's request does not warrent a change, tell them in the message you didn't change anything and keep the json the same.
                           
@@ -195,10 +195,12 @@ export async function requestSoundDescriptionUpdate(
       ],
     });
     const responseText = result.choices[0].message.content;
-    const startIndex = responseText.indexOf("{");
-    const endIndex = responseText.indexOf("}");
-    const cutString = responseText.substring(startIndex, endIndex + 1);
-    const jsonResponse = JSON.parse(cutString);
+    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error("No JSON found in GPT response");
+    }
+    const jsonResponse = JSON.parse(jsonMatch[0]);
+    console.log("updated response", jsonResponse);
 
     return { ...jsonResponse, oldDescriptions: descriptions };
   } catch (error) {
