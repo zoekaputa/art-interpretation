@@ -127,7 +127,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       );
 
       const descriptionAudio = await playDescriptionAudio(
-        descText + "Mosaic is still generating the audio for your artpiece. Please wait while we compose your soundscape experience."
+        descText
       );
     
     descriptionAudio.setOnPlaybackStatusUpdate(async (playbackStatus) => {

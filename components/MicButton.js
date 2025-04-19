@@ -182,10 +182,19 @@ const MicButton = ({
 
     const newSounds = await Promise.all(
       response.descriptions.map(async (desc, i) => {
-        if (desc === descriptions[i]) {
+        const old = descriptions[i];
+    
+        if (
+          desc.element === old.element &&
+          desc.volume === old.volume &&
+          desc.loop === old.loop &&
+          desc.interval === old.interval &&
+          desc.fadeIn === old.fadeIn &&
+          desc.fadeOut === old.fadeOut
+        ) {
           return sounds[i];
         } else {
-          await sounds[i].unloadAsync();
+          await sounds[i].sound.unloadAsync();
           return await reqSound(
             desc.element,
             i,
@@ -196,6 +205,7 @@ const MicButton = ({
         }
       })
     );
+    
 
     const messageSound = await playResponseAudio(response.message);
 
