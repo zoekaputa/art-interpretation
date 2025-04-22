@@ -155,23 +155,29 @@ export async function requestSoundDescriptionUpdate(
 ) {
   try {
     const result = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4.1",
       messages: [
         {
           role: "system",
           content: [
             {
               type: "text",
-              text: `You are an expert in updating the artwork's soundscape based on the user's request. Given a picture of a painting, a user message, a description of the painting, and existing sounds from a soundscape and their settings in the following format, 
-                        {
+              text: `You are an expert in answering questions about artowrks. Given a picture of a painting and a user message, respond in the following format:
+                        "{
                           message: <message to the user>,
                           elements: [<"element": element1, "volume": volume1, "loop": boolean, "interval": interval1, "fadeIn": boolean, "fadeOut": boolean, "startDelay": boolean>, <"element": element2, "volume": volume2, "loop": boolean, "interval": interval2, "fadeIn": boolean, "fadeOut": boolean, "startDelay": boolean>, ...]
-                        }
-                        where each element corresponds (by index) to a sound description. 
-                        You directly address the concerns layed out in their message by deciding which sounds need to be updated, and updating one or more settings. You can also add new sounds or remove existing sounds.
-                        Only modify the sounds the user requests you to change. Return the new json in the same format as above. 
+                        }"
+                        The elements attribute describes a set of sounds and their settings from a soundscape represeting the artwork, where each element corresponds (by index) to a sound description.
 
-                        If the user's request does not warrent a change, tell them in the message you didn't change anything and keep the json the same.
+                        You directly address the questions about the artwork and soundscape posed in the user's message through the message attribute. In order to answer questions about the artwork, look at the included image of the artowrk. 
+                        If their question warrents sounds needing to be updated, update one or more settings in the elements attribute. You can also add new sounds or remove existing sounds.
+
+                        If the user's request does not warrent a change, keep the json the same.
+
+                        When you do make a change, make the change you describe to the elements attribute in your response.
+                        Replace removed eleemnts with null in the included list of sounds, and add any new sounds to the end of the list in the same format as the included sounds.
+
+                        if you cannot answer the user's question, still respond in the above format, but tell them in the message attribute that you can't answer their question.
                           
                         current sound descriptions: ${JSON.stringify(
                           descriptions

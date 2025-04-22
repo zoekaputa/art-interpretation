@@ -180,11 +180,25 @@ const MicButton = ({
       image
     );
 
+    let numRemoved = 0;
+
     const newSounds = await Promise.all(
       response.elements.map(async (desc, i) => {
-        const old = descriptions[i];
+        const old = i >= descriptions.length ? null : descriptions[i];
 
-        if (
+        if (!desc) {
+          numRemoved = numRemoved + 1;
+          return null;
+        } else if (!old) {
+          await sounds[i].sound.unloadAsync();
+          return await reqSound(
+            desc.element,
+            i - numRemoved,
+            desc.fadeIn ? 0 : desc.volume,
+            desc.loop,
+            desc.interval
+          );
+        } else if (
           desc.element === old.element &&
           desc.volume === old.volume &&
           desc.loop === old.loop &&
@@ -210,11 +224,13 @@ const MicButton = ({
       return {
         sound: s,
         timeout: null,
-        fadeIn: response.elements[i].fadeIn,
-        fadeOut: response.elements[i].fadeOut,
-        volume: response.elements[i].volume,
+        fadeIn: response.elements[i] ? response.elements[i].fadeIn : null,
+        fadeOut: response.elements[i] ? response.elements[i].fadeOut : null,
+        volume: response.elements[i] ? response.elements[i].volume : null,
       };
     });
+
+    const filteredSounds = wrappedSounds.filter((item) => item.sound !== null);
 
     const messageSound = await playResponseAudio(response.message);
 
@@ -223,7 +239,7 @@ const MicButton = ({
         if (status.positionMillis > status.durationMillis * 0.8) {
           console.log("Done playing");
 
-          setSounds(wrappedSounds);
+          setSounds(filteredSounds);
           resolve(true);
         }
       });
