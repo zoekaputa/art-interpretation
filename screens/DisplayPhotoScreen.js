@@ -43,6 +43,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
   const [artName, setArtName] = useState(null);
   const [loadingSound, setLoadingSound] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const base64img = route.params.photo.base64;
 
   const soundsRef = useRef(sounds);
   soundsRef.current = sounds;
@@ -98,17 +99,63 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         playsInSilentModeIOS: true,
       });
 
-      const descriptions = await requestSoundDescriptions(
-        route.params.photo.base64
-      );
+      const descriptions = [
+        {
+          element: "birds chirping",
+          volume: 0.5,
+          loop: true,
+          interval: 5000,
+          fadeIn: true,
+          fadeOut: false,
+          startDelay: 0,
+        },
+        {
+          element: "gentle wind",
+          volume: 0.3,
+          loop: true,
+          interval: 3000,
+          fadeIn: true,
+          fadeOut: true,
+          startDelay: 0,
+        },
+        {
+          element: "dog barking",
+          volume: 0.4,
+          loop: false,
+          interval: 0,
+          fadeIn: false,
+          fadeOut: false,
+          startDelay: 2000,
+        },
+        {
+          element: "clinking glasses",
+          volume: 0.6,
+          loop: true,
+          interval: 8000,
+          fadeIn: false,
+          fadeOut: true,
+          startDelay: 0,
+        },
+        {
+          element: "footsteps on grass",
+          volume: 0.2,
+          loop: false,
+          interval: 0,
+          fadeIn: true,
+          fadeOut: true,
+          startDelay: 1000,
+        },
+      ]; // await requestSoundDescriptions(
+      //   base64img
+      // );
 
       console.log(descriptions);
       setSoundDescriptions(descriptions);
 
-      const descText = await getAltText(route.params.photo.base64);
+      const descText = await getAltText(base64img);
       setDescriptionText(descText);
 
-      const title = await getTitle(route.params.photo.base64);
+      const title = await getTitle(base64img);
       setArtName(title);
 
       const newSounds = await Promise.all(
@@ -253,7 +300,8 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
 
   const reqSound = async (desc, index, volume, loop, interval) => {
     try {
-      const soundUrl = await requestSoundLocal(desc);
+      const soundUrl =
+        "https://cdn.freesound.org/previews/327/327447_4028726-hq.mp3"; //  await requestSoundLocal(desc);
       console.log(desc, ":", soundUrl);
 
       const setLoop = loop && interval === 0;
@@ -412,7 +460,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   setIsLoading={setIsLoading}
                   playLoadingSound={playLoadingSound}
                   stopLoadingSound={stopLoadingSound}
-                  image={route.params.photo.base64}
+                  image={base64img}
                   setLoadingSound={setLoadingSound}
                   isPlaying={isPlaying}
                   playSounds={playSounds}

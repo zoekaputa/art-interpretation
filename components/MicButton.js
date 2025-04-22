@@ -15,6 +15,7 @@ import {
   getTranscription,
   requestSoundDescriptionUpdate,
   createAudioDescription,
+  isAffiramtive,
 } from "../scripts/gpt-request";
 
 const MicButton = ({
@@ -35,9 +36,15 @@ const MicButton = ({
   const [isRecording, setIsRecording] = useState(false);
   const [recording, setRecording] = useState(null);
   const [showPermissionModal, setShowPermissionModal] = useState(false);
+  const [proposedSounds, setProposedSounds] = useState(null);
+  const [proposedDescriptions, setProposedDescriptions] = useState(null);
 
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const opacityAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    console.log("p:", proposedSounds);
+  }, [proposedSounds]);
 
   async function startRecording() {
     const recording = new Audio.Recording();
@@ -157,6 +164,34 @@ const MicButton = ({
     ).start();
   };
 
+  const verifyWithUser = async (transcription) => {
+    const yes = await isAffiramtive(transcription);
+    if (yes) {
+      const messageSound = await playResponseAudio(
+        "Okay, I will make that change."
+      );
+
+      await new Promise((resolve, reject) => {
+        messageSound.setOnPlaybackStatusUpdate((status) => {
+          if (status.positionMillis > status.durationMillis * 0.8) {
+            console.log("Done playing");
+
+            setSounds(proposedSounds);
+            setSoundDescriptions(proposedDescriptions);
+            resolve(true);
+          }
+        });
+      });
+
+      await stopLoadingSound(loadingSound);
+      setLoadingSound(null);
+
+      setIsLoading(false);
+    }
+    setProposedSounds(null);
+    setProposedDescriptions(null);
+  };
+
   const stopPulsing = async () => {
     setIsLoading(true);
     await stopRecording();
@@ -173,68 +208,91 @@ const MicButton = ({
     opacityAnim.setValue(1);
     const audioFile = await recording.getURI();
     const transcription = await getTranscription(audioFile);
-    console.log(transcription);
+
+    console.log(proposedSounds);
+    if (proposedSounds) {
+      verifyWithUser(transcription);
+      return;
+    }
+
     const response = await requestSoundDescriptionUpdate(
       descriptions,
       transcription,
       image
     );
 
-    const newSounds = await Promise.all(
-      response.elements.map(async (desc, i) => {
-        const old = descriptions[i];
+    try {
+      let haveSoundsChanged = false;
 
-        if (
-          desc.element === old.element &&
-          desc.volume === old.volume &&
-          desc.loop === old.loop &&
-          desc.interval === old.interval &&
-          desc.fadeIn === old.fadeIn &&
-          desc.fadeOut === old.fadeOut
-        ) {
-          return sounds[i].sound;
-        } else {
-          await sounds[i].sound.unloadAsync();
-          return await reqSound(
-            desc.element,
-            i,
-            desc.fadeIn ? 0 : desc.volume,
-            desc.loop,
-            desc.interval
-          );
-        }
-      })
-    );
+      const newSounds = await Promise.all(
+        response.elements.map(async (desc, i) => {
+          const old = i >= descriptions.length ? null : descriptions[i];
 
-    const wrappedSounds = newSounds.map((s, i) => {
-      return {
-        sound: s,
-        timeout: null,
-        fadeIn: response.elements[i].fadeIn,
-        fadeOut: response.elements[i].fadeOut,
-        volume: response.elements[i].volume,
-      };
-    });
+          if (!desc) {
+            haveSoundsChanged = true;
+            return null;
+          } else if (!old) {
+            haveSoundsChanged = true;
+            await sounds[i].sound.unloadAsync();
+            return await reqSound(
+              desc.element,
+              i,
+              desc.fadeIn ? 0 : desc.volume,
+              desc.loop,
+              desc.interval
+            );
+          } else if (
+            desc.element === old.element &&
+            desc.volume === old.volume &&
+            desc.loop === old.loop &&
+            desc.interval === old.interval &&
+            desc.fadeIn === old.fadeIn &&
+            desc.fadeOut === old.fadeOut
+          ) {
+            return sounds[i].sound;
+          } else {
+            haveSoundsChanged = true;
+            await sounds[i].sound.unloadAsync();
+            return await reqSound(
+              desc.element,
+              i,
+              desc.fadeIn ? 0 : desc.volume,
+              desc.loop,
+              desc.interval
+            );
+          }
+        })
+      );
 
-    const messageSound = await playResponseAudio(response.message);
-
-    await new Promise((resolve, reject) => {
-      messageSound.setOnPlaybackStatusUpdate((status) => {
-        if (status.positionMillis > status.durationMillis * 0.8) {
-          console.log("Done playing");
-
-          setSounds(wrappedSounds);
-          resolve(true);
-        }
+      const wrappedSounds = newSounds.map((s, i) => {
+        return {
+          sound: s,
+          timeout: null,
+          fadeIn: response.elements[i] ? response.elements[i].fadeIn : null,
+          fadeOut: response.elements[i] ? response.elements[i].fadeOut : null,
+          volume: response.elements[i] ? response.elements[i].volume : null,
+        };
       });
-    });
 
-    await stopLoadingSound(loadingSound);
-    setLoadingSound(null);
+      const filteredSounds = wrappedSounds.filter(
+        (item) => item.sound !== null
+      );
 
-    setSoundDescriptions(response.descriptions);
+      if (haveSoundsChanged) {
+        console.log(filteredSounds);
+        setProposedSounds(filteredSounds);
+        setProposedDescriptions(response.descriptions);
+      }
 
-    setIsLoading(false);
+      const messageSound = await playResponseAudio(response.message);
+
+      await stopLoadingSound(loadingSound);
+      setLoadingSound(null);
+
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -257,7 +315,7 @@ const MicButton = ({
           size={30}
           color={theme.colors.darkBlue}
           accessible={true}
-          accessibilityLabel="Microphone button. How would you like to change the generated audio? Click to start recording. Click again to stop recording."
+          accessibilityLabel="Microphone button. What more would you like to know about the painting? Click to start recording. Click again to stop recording."
         />
       </TouchableOpacity>
     </View>
