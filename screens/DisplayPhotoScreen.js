@@ -84,10 +84,10 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
   useEffect(() => {
     const reqSounds = async () => {
       setIsLoading(true);
-
+    
       const loadingSound = await playLoadingSound();
       setLoadingSound(loadingSound);
-
+    
       await Audio.setAudioModeAsync({
         staysActiveInBackground: true,
         interruptionModeAndroid: 1,
@@ -97,57 +97,62 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         interruptionModeIOS: 0,
         playsInSilentModeIOS: true,
       });
-
-      const descriptions = await requestSoundDescriptions(
-        route.params.photo.base64
-      );
-
-      console.log(descriptions);
+    
+      const descriptions = await requestSoundDescriptions(route.params.photo.base64);
       setSoundDescriptions(descriptions);
-
+    
       const descText = await getAltText(route.params.photo.base64);
       setDescriptionText(descText);
-
+    
       const title = await getTitle(route.params.photo.base64);
       setArtName(title);
-
+    
       const newSounds = await Promise.all(
-        descriptions.map(
-          async ({ element, volume, loop, interval, fadeIn }, i) => {
-            const loadedSound = await reqSound(
-              element,
-              i,
-              fadeIn ? 0 : volume,
-              loop,
-              interval
-            );
-            return loadedSound;
-          }
-        )
+        descriptions.map(async ({ element, volume, loop, interval, fadeIn }, i) => {
+          const loadedSound = await reqSound(element, i, fadeIn ? 0 : volume, loop, interval);
+          return loadedSound;
+        })
       );
-
-      const descriptionAudio = await playDescriptionAudio(descText);
-
-      descriptionAudio.setOnPlaybackStatusUpdate(async (playbackStatus) => {
-        if (playbackStatus.didJustFinish) {
-          await stopLoadingSound(loadingSound);
-          setLoadingSound(null);
-
-          const wrappedSounds = newSounds.map((s, i) => {
-            return {
-              sound: s,
-              timeout: null,
-              fadeIn: descriptions[i].fadeIn,
-              fadeOut: descriptions[i].fadeOut,
-              volume: descriptions[i].volume,
-            };
-          });
-
-          setSounds(wrappedSounds);
-          setIsLoading(false);
+    
+      // load description audio, but don't play it yet
+      const descriptionAudioUri = await createAudioDescription(descText);
+      const descriptionSound = new Audio.Sound();
+      await descriptionSound.loadAsync({ uri: descriptionAudioUri }, { shouldPlay: false });
+    
+      await stopLoadingSound(loadingSound);
+      setLoadingSound(null);
+    
+      const wrappedSounds = newSounds.map((s, i) => ({
+        sound: s,
+        timeout: null,
+        fadeIn: descriptions[i].fadeIn,
+        fadeOut: descriptions[i].fadeOut,
+        volume: descriptions[i].volume,
+      }));
+    
+      // add description audio as one of the sounds to play
+      wrappedSounds.push({
+        sound: descriptionSound,
+        timeout: null,
+        fadeIn: false,
+        fadeOut: false,
+        volume: 1,
+      });
+    
+      setSounds(wrappedSounds);
+      setIsLoading(false);
+    
+      // start all sounds including alt text
+      wrappedSounds.forEach(async (sound) => {
+        await sound.sound.setPositionAsync(0);
+        await sound.sound.playAsync();
+        if (sound.fadeIn) {
+          fadeVolume(sound, 0, sound.volume, 5000);
         }
       });
+      setIsPlaying(true);
     };
+    
 
     reqSounds();
   }, []);
