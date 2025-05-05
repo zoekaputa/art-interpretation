@@ -36,29 +36,20 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [sounds, setSounds] = useState(null);
-  const [soundDescriptions, setSoundDescriptions] = useState(null);
+  const [soundDescriptions, setSoundDescriptions] = useState(
+    route.params.item.descriptions
+  );
   const [isPlaying, setIsPlaying] = useState(false);
   const [timeEllapsed, setTimeEllapsed] = useState(0);
-  const [descriptionText, setDescriptionText] = useState(null);
-  const [artName, setArtName] = useState(null);
+  const [descriptionText, setDescriptionText] = useState(
+    route.params.item.descriptionText
+  );
+  const [artName, setArtName] = useState(route.params.item.name);
   const [loadingSound, setLoadingSound] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const soundsRef = useRef(sounds);
   soundsRef.current = sounds;
-
-  const handleBookmark = () => {
-    const newBookmark = {
-      image: route.params.photo.uri,
-      descriptionText: descriptionText,
-      audio: sounds,
-      name: artName,
-    };
-
-    console.log("bookmarked");
-    addBookmark(newBookmark);
-    setIsBookmarked(true);
-  };
 
   useFocusEffect(
     useCallback(() => {
@@ -84,10 +75,10 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
   useEffect(() => {
     const reqSounds = async () => {
       setIsLoading(true);
-    
+
       const loadingSound = await playLoadingSound();
       setLoadingSound(loadingSound);
-    
+
       await Audio.setAudioModeAsync({
         staysActiveInBackground: true,
         interruptionModeAndroid: 1,
@@ -97,39 +88,41 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         interruptionModeIOS: 0,
         playsInSilentModeIOS: true,
       });
-    
-      const descriptions = await requestSoundDescriptions(route.params.photo.base64);
-      setSoundDescriptions(descriptions);
-    
-      const descText = await getAltText(route.params.photo.base64);
-      setDescriptionText(descText);
-    
-      const title = await getTitle(route.params.photo.base64);
-      setArtName(title);
-    
+
       const newSounds = await Promise.all(
-        descriptions.map(async ({ element, volume, loop, interval, fadeIn }, i) => {
-          const loadedSound = await reqSound(element, i, fadeIn ? 0 : volume, loop, interval);
-          return loadedSound;
-        })
+        soundDescriptions.map(
+          async ({ element, volume, loop, interval, fadeIn }, i) => {
+            const loadedSound = await reqSound(
+              element,
+              i,
+              fadeIn ? 0 : volume,
+              loop,
+              interval
+            );
+            return loadedSound;
+          }
+        )
       );
-    
+
       // load description audio, but don't play it yet
-      const descriptionAudioUri = await createAudioDescription(descText);
+      const descriptionAudioUri = await createAudioDescription(descriptionText);
       const descriptionSound = new Audio.Sound();
-      await descriptionSound.loadAsync({ uri: descriptionAudioUri }, { shouldPlay: false });
-    
+      await descriptionSound.loadAsync(
+        { uri: descriptionAudioUri },
+        { shouldPlay: false }
+      );
+
       await stopLoadingSound(loadingSound);
       setLoadingSound(null);
-    
+
       const wrappedSounds = newSounds.map((s, i) => ({
         sound: s,
         timeout: null,
-        fadeIn: descriptions[i].fadeIn,
-        fadeOut: descriptions[i].fadeOut,
-        volume: descriptions[i].volume,
+        fadeIn: soundDescriptions[i].fadeIn,
+        fadeOut: soundDescriptions[i].fadeOut,
+        volume: soundDescriptions[i].volume,
       }));
-    
+
       // add description audio as one of the sounds to play
       wrappedSounds.push({
         sound: descriptionSound,
@@ -138,10 +131,10 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         fadeOut: false,
         volume: 1,
       });
-    
+
       setSounds(wrappedSounds);
       setIsLoading(false);
-    
+
       // start all sounds including alt text
       wrappedSounds.forEach(async (sound) => {
         await sound.sound.setPositionAsync(0);
@@ -152,7 +145,6 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       });
       setIsPlaying(true);
     };
-    
 
     reqSounds();
   }, []);
@@ -258,7 +250,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
 
   const reqSound = async (desc, index, volume, loop, interval) => {
     try {
-      const soundUrl = await requestSoundLocal(desc);
+      const soundUrl = route.params.item.audios[desc];
       console.log(desc, ":", soundUrl);
 
       const setLoop = loop && interval === 0;
@@ -377,8 +369,8 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
           }
         >
           <Image
-            source={{ uri: route.params.photo.uri }}
-            style={[styles.image, { resizeMode: "contain" }]}
+            source={route.params.item.image}
+            style={[styles.image, { resizeMode: "cover" }]}
           />
         </View>
         {isLoading ? (
@@ -417,7 +409,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   setIsLoading={setIsLoading}
                   playLoadingSound={playLoadingSound}
                   stopLoadingSound={stopLoadingSound}
-                  image={route.params.photo.base64}
+                  image={route.params.item.image}
                   setLoadingSound={setLoadingSound}
                   isPlaying={isPlaying}
                   playSounds={playSounds}
@@ -431,35 +423,6 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   left="2"
                 />
               </TouchableOpacity>
-            </View>
-            <View style={styles.controlsRow}>
-              <View style={styles.controlButton}>
-                <TouchableOpacity onPress={handleBookmark}>
-                  <FontAwesome6
-                    name={"bookmark"}
-                    size={32}
-                    color={theme.colors.darkBlue}
-                    accessible={true}
-                    accessibilityLabel={
-                      isBookmarked ? "Added to Gallery" : "Add to Gallery"
-                    }
-                  />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.controlButton}>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("Gallery")}
-                >
-                  <FontAwesome6
-                    name="images"
-                    size={32}
-                    paddingTop={5}
-                    color={theme.colors.darkBlue}
-                    accessible={true}
-                    accessibilityLabel={"your gallery"}
-                  />
-                </TouchableOpacity>
-              </View>
             </View>
           </>
         )}
@@ -502,14 +465,14 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width: "100%",
-    padding: "10%",
+    paddingVertical: "10%",
     height: "fit-content",
     alignItems: "center",
   },
   image: {
-    height: 300,
+    height: 250,
+    width: "100%",
     borderRadius: 8,
-    width: "90%",
     borderRadius: 10,
     overflow: "hidden",
     boxShadow: "0px 0px 10px 4px rgba(141, 193, 221, 0.50)",
