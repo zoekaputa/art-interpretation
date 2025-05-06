@@ -134,16 +134,6 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
 
       setSounds(wrappedSounds);
       setIsLoading(false);
-
-      // start all sounds including alt text
-      wrappedSounds.forEach(async (sound) => {
-        await sound.sound.setPositionAsync(0);
-        await sound.sound.playAsync();
-        if (sound.fadeIn) {
-          fadeVolume(sound, 0, sound.volume, 5000);
-        }
-      });
-      setIsPlaying(true);
     };
 
     reqSounds();
