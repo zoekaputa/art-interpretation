@@ -73,6 +73,72 @@ export const BookmarkProvider = ({ children }) => {
       },
       name: "The Starry Night",
     },
+    {
+      id: 1,
+      image: require("../assets/paintings/water-lily-pond.jpg"),
+      descriptionText:
+        "This painting features a serene garden scene with a graceful white bridge arching over a tranquil pond filled with water lilies. The lush greenery surrounding the water is depicted in vibrant, impressionistic strokes, capturing the essence of light and reflection. The artist, Claude Monet, is renowned for his mastery of color and atmospheric effects, characteristic of the Impressionist movement in the late 19th century.",
+      descriptions: [
+        {
+          element: "water flowing",
+          fadeIn: true,
+          fadeOut: false,
+          interval: 10000,
+          loop: true,
+          startDelay: 0,
+          volume: 0.5,
+        },
+        {
+          element: "birds chirping",
+          fadeIn: true,
+          fadeOut: true,
+          interval: 5000,
+          loop: true,
+          startDelay: 2000,
+          volume: 0.4,
+        },
+        {
+          element: "leaves rustling",
+          fadeIn: false,
+          fadeOut: true,
+          interval: 8000,
+          loop: true,
+          startDelay: 3000,
+          volume: 0.3,
+        },
+        {
+          element: "frog croaking",
+          fadeIn: false,
+          fadeOut: false,
+          interval: 7000,
+          loop: true,
+          startDelay: 4000,
+          volume: 0.2,
+        },
+        {
+          element: "distant wind",
+          fadeIn: true,
+          fadeOut: true,
+          interval: 12000,
+          loop: true,
+          startDelay: 1000,
+          volume: 0.1,
+        },
+      ],
+      audios: {
+        "water flowing":
+          "https://cdn.freesound.org/previews/78/78411_1218676-hq.mp3",
+        "frog croaking":
+          "https://cdn.freesound.org/previews/67/67261_634166-hq.mp3",
+        "birds chirping":
+          "https://cdn.freesound.org/previews/327/327444_4028726-hq.mp3",
+        "leaves rustling":
+          "https://cdn.freesound.org/previews/667/667057_1661766-hq.mp3",
+        "distant wind":
+          "https://cdn.freesound.org/previews/669/669197_1661766-hq.mp3",
+      },
+      name: "The Water Lily Pond",
+    },
   ]);
 
   // Load saved bookmarks from AsyncStorage

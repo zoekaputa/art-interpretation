@@ -174,10 +174,24 @@ const MicButton = ({
     const audioFile = await recording.getURI();
     const transcription = await getTranscription(audioFile);
     console.log(transcription);
+
+    let base64 = null;
+
+    const imageResponse = await fetch(image);
+    const blob = await imageResponse.blob();
+
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      base64 = reader.result;
+    };
+
+    reader.readAsDataURL(blob);
+
     const response = await requestSoundDescriptionUpdate(
       descriptions,
       transcription,
-      image
+      base64
     );
 
     let numRemoved = 0;
