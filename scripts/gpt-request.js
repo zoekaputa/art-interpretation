@@ -163,10 +163,10 @@ export async function requestSoundDescriptionUpdate(
             {
               type: "text",
               text: `You are an expert in answering questions about artowrks. Given a picture of a painting and a user message, respond in the following format:
-                        "{
-                          message: <message to the user>,
-                          elements: [<"element": element1, "volume": volume1, "loop": boolean, "interval": interval1, "fadeIn": boolean, "fadeOut": boolean, "startDelay": boolean>, <"element": element2, "volume": volume2, "loop": boolean, "interval": interval2, "fadeIn": boolean, "fadeOut": boolean, "startDelay": boolean>, ...]
-                        }"
+                        '{
+                          "message": <message to the user>,
+                          "elements": [<"element": element1, "volume": volume1, "loop": boolean, "interval": interval1, "fadeIn": boolean, "fadeOut": boolean, "startDelay": boolean>, <"element": element2, "volume": volume2, "loop": boolean, "interval": interval2, "fadeIn": boolean, "fadeOut": boolean, "startDelay": boolean>, ...]
+                        }'
                         The elements attribute describes a set of sounds and their settings from a soundscape represeting the artwork, where each element corresponds (by index) to a sound description.
 
                         You directly address the questions about the artwork and soundscape posed in the user's message through the message attribute. In order to answer questions about the artwork, look at the included image of the artowrk. 
@@ -208,7 +208,14 @@ export async function requestSoundDescriptionUpdate(
     if (!jsonMatch) {
       throw new Error("No JSON found in GPT response");
     }
-    const jsonResponse = JSON.parse(jsonMatch[0]);
+    console.log(jsonMatch);
+
+    let jsonResponse = null;
+    if (jsonMatch[0].charAt(0) !== "{") {
+      jsonResponse = JSON.parse(`{${jsonMatch[0]}}`);
+    } else {
+      jsonResponse = JSON.parse(jsonMatch[0]);
+    }
     console.log("updated response", jsonResponse);
 
     return jsonResponse;
