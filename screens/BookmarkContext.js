@@ -205,6 +205,71 @@ export const BookmarkProvider = ({ children }) => {
       },
       name: "Breakfast in Bed",
     },
+    {
+      id: 3,
+      image: require("../assets/paintings/city-college.jpeg"),
+      descriptionText:
+        "This painting by Jacob Lawrence features a vibrant winter scene with a backdrop of snow-covered hills and a blue sky. In the foreground, a series of colorful buildings, predominately in dark tones with geometric patterns, frame a winding path. Figures of people, dressed in varied colors, are seen walking, skiing, and engaging in winter activities on the snowy hillside. The artwork is characterized by bold, flat shapes and an expressive use of color, creating a lively atmosphere of community and movement.",
+      descriptions: [
+        {
+          element: "snow crunching",
+          fadeIn: true,
+          fadeOut: false,
+          interval: 2000,
+          loop: true,
+          startDelay: 0,
+          volume: 1,
+        },
+        {
+          element: "laughter",
+          fadeIn: true,
+          fadeOut: true,
+          interval: 3000,
+          loop: true,
+          startDelay: 0,
+          volume: 0.1,
+        },
+        {
+          element: "wind blowing",
+          fadeIn: true,
+          fadeOut: true,
+          interval: 5000,
+          loop: true,
+          startDelay: 0,
+          volume: 1,
+        },
+        {
+          element: "footsteps",
+          fadeIn: true,
+          fadeOut: true,
+          interval: 2500,
+          loop: true,
+          startDelay: 0,
+          volume: 0.9,
+        },
+        {
+          element: "distant chatter",
+          fadeIn: true,
+          fadeOut: true,
+          interval: 4000,
+          loop: true,
+          startDelay: 0,
+          volume: 0.9,
+        },
+      ],
+      audios: {
+        laughter: "https://cdn.freesound.org/previews/171/171168_321967-hq.mp3",
+        "distant chatter":
+          "https://cdn.freesound.org/previews/542/542148_10965984-hq.mp3",
+        footsteps:
+          "https://cdn.freesound.org/previews/505/505831_4024739-hq.mp3",
+        "snow crunching":
+          "https://cdn.freesound.org/previews/766/766454_15744955-hq.mp3",
+        "wind blowing":
+          "https://cdn.freesound.org/previews/361/361053_5914866-hq.mp3",
+      },
+      name: "City College is like a Beacon over Harlem",
+    },
   ]);
 
   // Load saved bookmarks from AsyncStorage
