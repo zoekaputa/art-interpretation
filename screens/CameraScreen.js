@@ -133,9 +133,7 @@ const CameraScreen = ({ route, navigation }) => {
               Welcome to Mosaic! Experience realism through sound with Mosaic.
               Simply take a picture of your artwork, and Mosaic will generate a
               detailed description and an immersive soundscape that brings your
-              art to life. You can then record your own requests—like 'add
-              chirping birds'—to adjust the audio and shape it to match your
-              mental image of the piece.
+              art to life. You can then interact with the art-expert chatbot to further explore artwork, which will update your soundscape accordingly!
             </Text>
             <Button title="Continue" onPress={() => setIsModalVisible(false)} />
           </View>
