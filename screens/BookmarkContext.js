@@ -139,6 +139,72 @@ export const BookmarkProvider = ({ children }) => {
       },
       name: "The Water Lily Pond",
     },
+    {
+      id: 2,
+      image: require("../assets/paintings/breakfast-in-bed.jpg"),
+      descriptionText:
+        "This artwork is titled “Breakfast in Bed“ by Mary Cassatt, an American painter active in the late 19th and early 20th centuries. The painting features two small children nestled together in bed, conveying a sense of warmth and intimacy. The younger child, with curly hair, sits beside an older sibling who appears to be sleeping, their faces showcasing soft, serene expressions. The scene is set against a backdrop of crisp white bed linens and a muted green bedside table that holds a tea cup. The brushwork is loose and fluid, characteristic of early 20th-century Impressionism, highlighting the tender connection between the siblings.",
+      descriptions: [
+        {
+          element: "soft breathing",
+          fadeIn: true,
+          fadeOut: false,
+          interval: 30000,
+          loop: true,
+          startDelay: 0,
+          volume: 0.5,
+        },
+        {
+          element: "gentle rustling",
+          fadeIn: true,
+          fadeOut: false,
+          interval: 15000,
+          loop: true,
+          startDelay: 0,
+          volume: 0.3,
+        },
+        {
+          element: "light rain",
+          fadeIn: false,
+          fadeOut: true,
+          interval: 60000,
+          loop: true,
+          startDelay: 0,
+          volume: 0.4,
+        },
+        {
+          element: "distant lullaby",
+          fadeIn: true,
+          fadeOut: true,
+          interval: 120000,
+          loop: true,
+          startDelay: 0,
+          volume: 0.6,
+        },
+        {
+          element: "teacup clinking",
+          fadeIn: false,
+          fadeOut: false,
+          interval: 0,
+          loop: false,
+          startDelay: 5000,
+          volume: 0.2,
+        },
+      ],
+      audios: {
+        "soft breathing":
+          "https://cdn.freesound.org/previews/795/795721_16936704-hq.mp3",
+        "teacup clinking":
+          "https://cdn.freesound.org/previews/665/665189_14490715-hq.mp3",
+        "light rain":
+          "https://cdn.freesound.org/previews/501/501242_8644110-hq.mp3",
+        "distant lullaby":
+          "https://cdn.freesound.org/previews/706/706663_8432823-hq.mp3",
+        "gentle rustling":
+          "https://cdn.freesound.org/previews/497/497134_10552075-hq.mp3",
+      },
+      name: "Breakfast in Bed",
+    },
   ]);
 
   // Load saved bookmarks from AsyncStorage
