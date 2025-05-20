@@ -164,8 +164,8 @@ export async function requestSoundDescriptionUpdate(
               type: "text",
               text: `You are an expert in answering questions about artowrks. Given a picture of a painting and a user message, respond in the following format:
                         "{
-                          message: <message to the user>,
-                          elements: [<"element": element1, "volume": volume1, "loop": boolean, "interval": interval1, "fadeIn": boolean, "fadeOut": boolean, "startDelay": boolean>, <"element": element2, "volume": volume2, "loop": boolean, "interval": interval2, "fadeIn": boolean, "fadeOut": boolean, "startDelay": boolean>, ...]
+                          "message": <message to the user>,
+                          "elements": [<"element": element1, "volume": volume1, "loop": boolean, "interval": interval1, "fadeIn": boolean, "fadeOut": boolean, "startDelay": boolean>, <"element": element2, "volume": volume2, "loop": boolean, "interval": interval2, "fadeIn": boolean, "fadeOut": boolean, "startDelay": boolean>, ...]
                         }"
                         The elements attribute describes a set of sounds and their settings from a soundscape represeting the artwork, where each element corresponds (by index) to a sound description.
 
