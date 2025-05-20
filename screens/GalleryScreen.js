@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
     fontFamily: theme.fonts.karlaLight,
     fontSize: 20,
     padding: 10,
+    width: "70%",
   },
   controlsRow: {
     flexDirection: "row",
