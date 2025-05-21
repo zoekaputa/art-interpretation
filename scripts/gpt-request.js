@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import { Buffer } from "buffer";
 import * as FileSystem from "expo-file-system";
 import axios from "axios";
+import artworkData from "../assets/MCD_Artwork_Database.json";
 
 const openai = new OpenAI({
   apiKey: process.env.EXPO_PUBLIC_GPT_API_KEY,
@@ -87,6 +88,7 @@ export async function createAudioDescription(text) {
 
 export async function requestSoundDescriptions(base64Img) {
   try {
+
     const result = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -95,7 +97,9 @@ export async function requestSoundDescriptions(base64Img) {
           content: [
             {
               type: "text",
-              text: `Given a picture of a painting you are an expert in creating artwork descriptions. The user wants to create a soundscape representing the painting
+              text: `Given a picture of a painting you are an expert in creating artwork descriptions. Refer to this dataset for the artwork, which may include the title, a visual description to help you identify the artwork, and additional information about the artwork.
+                      Artwork dataset: ${artworkData}
+                      The user wants to create a soundscape representing the painting
                         using a description to sound effect database (https://freesound.org/). You give them a list of around 5 INCREDIBLY SIMPLE sound effects descriptions
                         (like 2-3 words) that they would need to make a representative soundscape describing the scene of the artwork. The descriptions should be so simple
                         that if I query https://freesound.org/'s database for them, I should get results. For each description, based on its relevance in the photo, provide a 
@@ -291,6 +295,7 @@ export async function getTitle(base64Img) {
 
 export async function getAltText(base64Img) {
   try {
+    //console.log("artworkData", artworkData);
     const result = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -299,7 +304,7 @@ export async function getAltText(base64Img) {
           content: [
             {
               type: "text",
-              text: "You are an expert at coming up with short alt text descirptions for paintings. You focus on the visuals in the scene and the aritistic style of the work. If you recognize the piece of artwork, also provide the artwork's title, the artist, and the time period its from. Respond as if you were presenting this art to someone who is touring a museum.",
+              text: "You are an expert at coming up with short alt text descirptions for paintings. You focus on the visuals in the scene and the aritistic style of the work. Refer to this dataset for the artwork, which may include the title, a visual description to help you identify the artwork, and additional information about the artwork. Artwork dataset: ${artworkData} If you recognize the piece of artwork, also provide the artwork's title, the artist, and the time period its from. Respond as if you were presenting this art to someone who is touring a museum.",
             },
           ],
         },
