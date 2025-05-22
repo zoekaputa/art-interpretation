@@ -146,13 +146,13 @@ export const BookmarkProvider = ({ children }) => {
         "This artwork is titled “Breakfast in Bed“ by Mary Cassatt, an American painter active in the late 19th and early 20th centuries. The painting features two small children nestled together in bed, conveying a sense of warmth and intimacy. The younger child, with curly hair, sits beside an older sibling who appears to be sleeping, their faces showcasing soft, serene expressions. The scene is set against a backdrop of crisp white bed linens and a muted green bedside table that holds a tea cup. The brushwork is loose and fluid, characteristic of early 20th-century Impressionism, highlighting the tender connection between the siblings.",
       descriptions: [
         {
-          element: "soft breathing",
+          element: "baby giggling",
           fadeIn: true,
           fadeOut: false,
           interval: 30000,
           loop: true,
           startDelay: 0,
-          volume: 0.5,
+          volume: 0.4,
         },
         {
           element: "gentle rustling",
@@ -170,7 +170,7 @@ export const BookmarkProvider = ({ children }) => {
           interval: 60000,
           loop: true,
           startDelay: 0,
-          volume: 0.4,
+          volume: 0.6,
         },
         {
           element: "distant lullaby",
@@ -179,7 +179,7 @@ export const BookmarkProvider = ({ children }) => {
           interval: 120000,
           loop: true,
           startDelay: 0,
-          volume: 0.6,
+          volume: 0.3,
         },
         {
           element: "teacup clinking",
@@ -188,12 +188,12 @@ export const BookmarkProvider = ({ children }) => {
           interval: 0,
           loop: false,
           startDelay: 5000,
-          volume: 0.2,
+          volume: 0.4,
         },
       ],
       audios: {
-        "soft breathing":
-          "https://cdn.freesound.org/previews/795/795721_16936704-hq.mp3",
+        "baby giggling":
+          "https://cdn.freesound.org/previews/388/388407_7293523-hq.mp3",
         "teacup clinking":
           "https://cdn.freesound.org/previews/665/665189_14490715-hq.mp3",
         "light rain":
@@ -209,7 +209,7 @@ export const BookmarkProvider = ({ children }) => {
       id: 3,
       image: require("../assets/paintings/city-college.jpeg"),
       descriptionText:
-        "This painting by Jacob Lawrence features a vibrant winter scene with a backdrop of snow-covered hills and a blue sky. In the foreground, a series of colorful buildings, predominately in dark tones with geometric patterns, frame a winding path. Figures of people, dressed in varied colors, are seen walking, skiing, and engaging in winter activities on the snowy hillside. The artwork is characterized by bold, flat shapes and an expressive use of color, creating a lively atmosphere of community and movement.",
+        "This painting by Jacob Lawrence features a vibrant winter scene with a backdrop of snow-covered hills and a blue sky. In the foreground, a series of colorful buildings, predominately in dark tones with geometric patterns, frame a winding path. Figures of people, dressed in varied colors, are seen walking, sledding, and engaging in winter activities on the snowy hillside. The artwork is characterized by bold, flat shapes and an expressive use of color, creating a lively atmosphere of community and movement.",
       descriptions: [
         {
           element: "snow crunching",
@@ -218,16 +218,16 @@ export const BookmarkProvider = ({ children }) => {
           interval: 2000,
           loop: true,
           startDelay: 0,
-          volume: 1,
+          volume: 0.4,
         },
         {
-          element: "laughter",
+          element: "children sledding",
           fadeIn: true,
           fadeOut: true,
           interval: 3000,
           loop: true,
           startDelay: 0,
-          volume: 0.1,
+          volume: 0.3,
         },
         {
           element: "wind blowing",
@@ -245,7 +245,7 @@ export const BookmarkProvider = ({ children }) => {
           interval: 2500,
           loop: true,
           startDelay: 0,
-          volume: 0.9,
+          volume: 0.5,
         },
         {
           element: "distant chatter",
@@ -258,7 +258,7 @@ export const BookmarkProvider = ({ children }) => {
         },
       ],
       audios: {
-        laughter: "https://cdn.freesound.org/previews/171/171168_321967-hq.mp3",
+        "children sledding": "https://cdn.freesound.org/previews/554/554358_2061858-hq.mp3",
         "distant chatter":
           "https://cdn.freesound.org/previews/542/542148_10965984-hq.mp3",
         footsteps:
