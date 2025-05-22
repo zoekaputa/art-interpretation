@@ -72,6 +72,7 @@ export const BookmarkProvider = ({ children }) => {
           "https://cdn.freesound.org/previews/755/755882_2061858-hq.mp3",
       },
       name: "The Starry Night",
+      artist: "Vincent van Gogh",
     },
     {
       id: 1,
@@ -138,6 +139,7 @@ export const BookmarkProvider = ({ children }) => {
           "https://cdn.freesound.org/previews/669/669197_1661766-hq.mp3",
       },
       name: "The Water Lily Pond",
+      artist: "Claude Monet",
     },
     {
       id: 2,
@@ -204,6 +206,7 @@ export const BookmarkProvider = ({ children }) => {
           "https://cdn.freesound.org/previews/497/497134_10552075-hq.mp3",
       },
       name: "Breakfast in Bed",
+      artist: "Mary Cassatt",
     },
     {
       id: 3,
@@ -269,6 +272,7 @@ export const BookmarkProvider = ({ children }) => {
           "https://cdn.freesound.org/previews/361/361053_5914866-hq.mp3",
       },
       name: "City College is like a Beacon over Harlem",
+      artist: "Jacob Lawrence",
     },
   ]);
 

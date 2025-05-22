@@ -73,18 +73,6 @@ export default function HomeScreen() {
 
             return {
               headerTitle: "",
-              headerLeft: () => (
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                  <FontAwesome6
-                    name="chevron-left"
-                    size={32}
-                    color={theme.colors.black}
-                    style={styles.icon}
-                    accessible={true}
-                    accessibilityLabel={`Back to ${previousRoute}`}
-                  />
-                </TouchableOpacity>
-              ),
               headerTransparent: true,
               headerStyle: {
                 backgroundColor: "transparent",
