@@ -12,52 +12,54 @@ export const BookmarkProvider = ({ children }) => {
       image: require("../assets/paintings/starry-night.jpg"),
       descriptionText:
         "This is 'The Starry Night' by Vincent van Gogh, created in 1889. The painting features a swirling night sky filled with glowing stars and a luminous crescent moon, over a quiet village in the background. In the foreground, a large, dark cypress tree rises dramatically, contrasting with the lighter tones of the sky and the quaint white church steeple. Van Gogh's expressive brushstrokes and vibrant colors create a sense of movement and emotional depth. The scene captures a dreamlike atmosphere, inviting viewers to immerse themselves in its rhythmic beauty.",
+      shortDescription:
+        "An image of an oil-on-canvas impressionist painting depicting a village just before sunrise.",
       descriptions: [
         {
-      "element": "whispering wind",
-      "volume": 0.5,
-      "loop": true,
-      "interval": 0,
-      "fadeIn": true,
-      "fadeOut": false,
-      "startDelay": 0
-    },
-    {
-      "element": "distant stars",
-      "volume": 0.3,
-      "loop": true,
-      "interval": 1000,
-      "fadeIn": true,
-      "fadeOut": true,
-      "startDelay": 0
-    },
-    {
-      "element": "soft chimes",
-      "volume": 0.4,
-      "loop": false,
-      "interval": 0,
-      "fadeIn": true,
-      "fadeOut": true,
-      "startDelay": 2000
-    },
-    {
-      "element": "gentle wave",
-      "volume": 0.6,
-      "loop": true,
-      "interval": 2000,
-      "fadeIn": false,
-      "fadeOut": true,
-      "startDelay": 0
-    },
-    {
-      "element": "night owl hoot",
-      "volume": 0.2,
-      "loop": false,
-      "interval": 0,
-      "fadeIn": true,
-      "fadeOut": true,
-      "startDelay": 3000
-    },
+          element: "whispering wind",
+          volume: 0.5,
+          loop: true,
+          interval: 0,
+          fadeIn: true,
+          fadeOut: false,
+          startDelay: 0,
+        },
+        {
+          element: "distant stars",
+          volume: 0.3,
+          loop: true,
+          interval: 1000,
+          fadeIn: true,
+          fadeOut: true,
+          startDelay: 0,
+        },
+        {
+          element: "soft chimes",
+          volume: 0.4,
+          loop: false,
+          interval: 0,
+          fadeIn: true,
+          fadeOut: true,
+          startDelay: 2000,
+        },
+        {
+          element: "gentle wave",
+          volume: 0.6,
+          loop: true,
+          interval: 2000,
+          fadeIn: false,
+          fadeOut: true,
+          startDelay: 0,
+        },
+        {
+          element: "night owl hoot",
+          volume: 0.2,
+          loop: false,
+          interval: 0,
+          fadeIn: true,
+          fadeOut: true,
+          startDelay: 3000,
+        },
       ],
       audios: {
         "whispering wind":
@@ -79,6 +81,8 @@ export const BookmarkProvider = ({ children }) => {
       image: require("../assets/paintings/water-lily-pond.jpg"),
       descriptionText:
         "This painting features a serene garden scene with a graceful white bridge arching over a tranquil pond filled with water lilies. The lush greenery surrounding the water is depicted in vibrant, impressionistic strokes, capturing the essence of light and reflection. The artist, Claude Monet, is renowned for his mastery of color and atmospheric effects, characteristic of the Impressionist movement in the late 19th century.",
+      shortDescription:
+        "An image of an impressionist painting depicting a bridge over a pond covered water lilies.",
       descriptions: [
         {
           element: "water flowing",
@@ -146,6 +150,8 @@ export const BookmarkProvider = ({ children }) => {
       image: require("../assets/paintings/breakfast-in-bed.jpg"),
       descriptionText:
         "This artwork is titled “Breakfast in Bed“ by Mary Cassatt, an American painter active in the late 19th and early 20th centuries. The painting features two small children nestled together in bed, conveying a sense of warmth and intimacy. The younger child, with curly hair, sits beside an older sibling who appears to be sleeping, their faces showcasing soft, serene expressions. The scene is set against a backdrop of crisp white bed linens and a muted green bedside table that holds a tea cup. The brushwork is loose and fluid, characteristic of early 20th-century Impressionism, highlighting the tender connection between the siblings.",
+      shortDescription:
+        "An image of an realism painting two siblings resting in bed in the morning.",
       descriptions: [
         {
           element: "soft breathing",
@@ -213,6 +219,8 @@ export const BookmarkProvider = ({ children }) => {
       image: require("../assets/paintings/city-college.jpeg"),
       descriptionText:
         "This painting by Jacob Lawrence features a vibrant winter scene with a backdrop of snow-covered hills and a blue sky. In the foreground, a series of colorful buildings, predominately in dark tones with geometric patterns, frame a winding path. Figures of people, dressed in varied colors, are seen walking, skiing, and engaging in winter activities on the snowy hillside. The artwork is characterized by bold, flat shapes and an expressive use of color, creating a lively atmosphere of community and movement.",
+      shortDescription:
+        "An image of an dynamic cubism painting depicting a snow-cover hill in a city.",
       descriptions: [
         {
           element: "snow crunching",
