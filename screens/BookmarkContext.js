@@ -11,65 +11,65 @@ export const BookmarkProvider = ({ children }) => {
       id: 0,
       image: require("../assets/paintings/starry-night.jpg"),
       descriptionText:
-        "This is 'The Starry Night' by Vincent van Gogh, created in 1889. The painting features a swirling night sky filled with glowing stars and a luminous crescent moon, over a quiet village. In the foreground, a large, dark cypress tree rises dramatically, contrasting with the lighter tones of the sky and the quaint white church steeple. Van Gogh's expressive brushstrokes and vibrant colors create a sense of movement and emotional depth. The scene captures a dreamlike atmosphere, inviting viewers to immerse themselves in its rhythmic beauty.",
+        "This is 'The Starry Night' by Vincent van Gogh, created in 1889. The painting features a swirling night sky filled with glowing stars and a luminous crescent moon, over a quiet village in the background. In the foreground, a large, dark cypress tree rises dramatically, contrasting with the lighter tones of the sky and the quaint white church steeple. Van Gogh's expressive brushstrokes and vibrant colors create a sense of movement and emotional depth. The scene captures a dreamlike atmosphere, inviting viewers to immerse themselves in its rhythmic beauty.",
       descriptions: [
         {
-          element: "gentle wind",
-          fadeIn: true,
-          fadeOut: false,
-          interval: 5000,
-          loop: true,
-          startDelay: 0,
-          volume: 0.3,
-        },
-        {
-          element: "distant church bells",
-          fadeIn: false,
-          fadeOut: true,
-          interval: 12000,
-          loop: true,
-          startDelay: 2000,
-          volume: 0.1,
-        },
-        {
-          element: "soft nightingale calls",
-          fadeIn: true,
-          fadeOut: false,
-          interval: 8000,
-          loop: true,
-          startDelay: 1000,
-          volume: 0.4,
-        },
-        {
-          element: "rustling leaves",
-          fadeIn: true,
-          fadeOut: true,
-          interval: 6000,
-          loop: true,
-          startDelay: 0,
-          volume: 0.2,
-        },
-        {
-          element: "crickets chirping",
-          fadeIn: false,
-          fadeOut: false,
-          interval: 4000,
-          loop: true,
-          startDelay: 0,
-          volume: 0.5,
-        },
+      "element": "whispering wind",
+      "volume": 0.5,
+      "loop": true,
+      "interval": 0,
+      "fadeIn": true,
+      "fadeOut": false,
+      "startDelay": 0
+    },
+    {
+      "element": "distant stars",
+      "volume": 0.3,
+      "loop": true,
+      "interval": 1000,
+      "fadeIn": true,
+      "fadeOut": true,
+      "startDelay": 0
+    },
+    {
+      "element": "soft chimes",
+      "volume": 0.4,
+      "loop": false,
+      "interval": 0,
+      "fadeIn": true,
+      "fadeOut": true,
+      "startDelay": 2000
+    },
+    {
+      "element": "gentle wave",
+      "volume": 0.6,
+      "loop": true,
+      "interval": 2000,
+      "fadeIn": false,
+      "fadeOut": true,
+      "startDelay": 0
+    },
+    {
+      "element": "night owl hoot",
+      "volume": 0.2,
+      "loop": false,
+      "interval": 0,
+      "fadeIn": true,
+      "fadeOut": true,
+      "startDelay": 3000
+    },
       ],
       audios: {
-        "gentle wind":
-          "https://cdn.freesound.org/previews/181/181250_499617-hq.mp3",
-        "soft nightingale calls":
-          "https://cdn.freesound.org/previews/54/54746_8043-hq.mp3",
-        "rustling leaves":
-          "https://cdn.freesound.org/previews/489/489929_10570192-hq.mp3",
-        "distant church bells":
-          "https://cdn.freesound.org/previews/412/412918_5121236-hq.mp3",
-        "crickets chirping":
-          "https://cdn.freesound.org/previews/755/755882_2061858-hq.mp3",
+        "whispering wind":
+          "https://cdn.freesound.org/previews/728/728737_801011-hq.mp3",
+        "distant stars":
+          "https://cdn.freesound.org/previews/511/511702_973833-hq.mp3",
+        "soft chimes":
+          "https://cdn.freesound.org/previews/119/119543_1492767-hq.mp3",
+        "gentle wave":
+          "https://cdn.freesound.org/previews/566/566459_9630213-hq.mp3",
+        "night owl hoot":
+          "https://cdn.freesound.org/previews/745/745208_8711646-hq.mp3",
       },
       name: "The Starry Night",
     },
@@ -86,7 +86,7 @@ export const BookmarkProvider = ({ children }) => {
           interval: 10000,
           loop: true,
           startDelay: 0,
-          volume: 0.5,
+          volume: 0.1,
         },
         {
           element: "birds chirping",
@@ -95,7 +95,7 @@ export const BookmarkProvider = ({ children }) => {
           interval: 5000,
           loop: true,
           startDelay: 2000,
-          volume: 0.4,
+          volume: 0.6,
         },
         {
           element: "leaves rustling",
@@ -104,16 +104,16 @@ export const BookmarkProvider = ({ children }) => {
           interval: 8000,
           loop: true,
           startDelay: 3000,
-          volume: 0.3,
+          volume: 0.2,
         },
         {
           element: "frog croaking",
           fadeIn: false,
           fadeOut: false,
-          interval: 7000,
+          interval: 6000,
           loop: true,
           startDelay: 4000,
-          volume: 0.2,
+          volume: 0.1,
         },
         {
           element: "distant wind",
@@ -129,9 +129,9 @@ export const BookmarkProvider = ({ children }) => {
         "water flowing":
           "https://cdn.freesound.org/previews/78/78411_1218676-hq.mp3",
         "frog croaking":
-          "https://cdn.freesound.org/previews/67/67261_634166-hq.mp3",
+          "https://cdn.freesound.org/previews/536/536759_1415754-hq.mp3",
         "birds chirping":
-          "https://cdn.freesound.org/previews/327/327444_4028726-hq.mp3",
+          "https://cdn.freesound.org/previews/733/733732_8378872-hq.mp3",
         "leaves rustling":
           "https://cdn.freesound.org/previews/667/667057_1661766-hq.mp3",
         "distant wind":
