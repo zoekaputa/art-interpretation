@@ -33,7 +33,7 @@ const GalleryScreen = ({ route, navigation }) => {
               })
             }
             accessible={true}
-            accessibilityLabel={`expand ${item.name} painting`}
+            accessibilityLabel={`${item.name} by ${item.artist}. ${item.shortDescription}. Click to explore the artwork.`}
           >
             <View style={styles.imageContainer} accessible={true}>
               <View style={styles.descriptionTextContainer}>
@@ -55,7 +55,7 @@ const GalleryScreen = ({ route, navigation }) => {
               <Image
                 source={item.image}
                 style={styles.image}
-                accessibilityLabel={item.descriptionText}
+                accessibilityLabel={item.shortDescription}
               />
             </View>
           </TouchableOpacity>
