@@ -88,7 +88,6 @@ export async function createAudioDescription(text) {
 
 export async function requestSoundDescriptions(base64Img) {
   try {
-
     const result = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -97,9 +96,12 @@ export async function requestSoundDescriptions(base64Img) {
           content: [
             {
               type: "text",
-              text: `Given a picture of a painting you are an expert in creating artwork descriptions. Refer to this dataset for the artwork, which may include the title, a visual description to help you identify the artwork, and additional information about the artwork.
-                      Artwork dataset: ${artworkData}
-                      The user wants to create a soundscape representing the painting
+              text: `Given a picture of a painting you are an expert in creating soundscapes for artwork. 
+                      When generating soundscapes, you refer to and use the context provided in this dataset, which includes information on the exhibition the artwork is in, and 
+                      may include the title, a visual description to help you identify the artwork, and additional information about the artwork.
+                      Artwork dataset: ${JSON.stringify(artworkData)}
+
+                      The user wants to create a soundscape representing the provided artwork
                         using a description to sound effect database (https://freesound.org/). You give them a list of around 5 INCREDIBLY SIMPLE sound effects descriptions
                         (like 2-3 words) that they would need to make a representative soundscape describing the scene of the artwork. The descriptions should be so simple
                         that if I query https://freesound.org/'s database for them, I should get results. For each description, based on its relevance in the photo, provide a 
@@ -166,13 +168,17 @@ export async function requestSoundDescriptionUpdate(
           content: [
             {
               type: "text",
-              text: `You are an expert in answering questions about artowrks. Given a picture of a painting and a user message, respond in the following format:
+              text: `You are an expert in answering questions about artowrks. When answering questions, refer to this dataset, which information about the exhibition that the artwork is part of and 
+                      may include the title, a visual description to help you identify the artwork, and additional information about the artwork.
+                      Artwork dataset: ${JSON.stringify(artworkData)}
+                      
+                      Given a picture of an artwork and a user message, respond in the following format:
                         '{
                           "message": <message to the user>,
                           "elements": [<"element": element1, "volume": volume1, "loop": boolean, "interval": interval1, "fadeIn": boolean, "fadeOut": boolean, "startDelay": boolean>, <"element": element2, "volume": volume2, "loop": boolean, "interval": interval2, "fadeIn": boolean, "fadeOut": boolean, "startDelay": boolean>, ...]
                         }'
                         The elements attribute describes a set of sounds and their settings from a soundscape represeting the artwork, where each element corresponds (by index) to a sound description.
-
+                      
                         You directly address the questions about the artwork and soundscape posed in the user's message through the message attribute. In order to answer questions about the artwork, look at the included image of the artowrk. 
                         If their question warrents sounds needing to be updated, update one or more settings in the elements attribute. You can also add new sounds or remove existing sounds.
 
@@ -273,7 +279,11 @@ export async function getTitle(base64Img) {
           content: [
             {
               type: "text",
-              text: "Come up with a five or less word descriptive name for the painting in this image. Do not surround the title in quotes",
+              text: `Give me the name of this artwork.
+                     Do not surround the title in quotes. When coming up with a title, use the context of this dataset, which includes information about the exhibition that the artwork
+                     is in and may include the title, a visual description to help you identify the artwork, and additional information about the artwork. If the artwork is in the dataset,
+                     use the title from there (use the "Description" field to match the included image to a specific artwork). If not, come up with a five or less word descriptive name for the painting in this image.
+                      Artwork dataset: ${JSON.stringify(artworkData)}`,
             },
             {
               type: "image_url",
@@ -304,7 +314,9 @@ export async function getAltText(base64Img) {
           content: [
             {
               type: "text",
-              text: "You are an expert at coming up with short alt text descirptions for paintings. You focus on the visuals in the scene and the aritistic style of the work. Refer to this dataset for the artwork, which may include the title, a visual description to help you identify the artwork, and additional information about the artwork. Artwork dataset: ${artworkData} If you recognize the piece of artwork, also provide the artwork's title, the artist, and the time period its from. Respond as if you were presenting this art to someone who is touring a museum.",
+              text: `You are an expert at coming up with short alt text descirptions for paintings. You focus on the aritistic style of the work and the context and meaning of the work. Refer to this dataset for the artwork, which may include the title, a visual description to help you identify the artwork, and additional information about the artwork. Use the "Description" field to match the included image to a specific artwork. Artwork dataset: ${JSON.stringify(
+                artworkData
+              )} If you recognize the piece of artwork, also provide the artwork's title, the artist, and the time period its from. Respond as if you were presenting this art to someone who is touring a museum.`,
             },
           ],
         },
