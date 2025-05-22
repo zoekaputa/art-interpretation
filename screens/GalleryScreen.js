@@ -36,13 +36,22 @@ const GalleryScreen = ({ route, navigation }) => {
             accessibilityLabel={`expand ${item.name} painting`}
           >
             <View style={styles.imageContainer} accessible={true}>
-              <Text
-                style={styles.titleText}
-                accessible={true}
-                accessibilityLabel={`Title: ${item.name}`}
-              >
-                {item.name}
-              </Text>
+              <View style={styles.descriptionTextContainer}>
+                <Text
+                  style={styles.titleText}
+                  accessible={true}
+                  accessibilityLabel={`Title: ${item.name}`}
+                >
+                  {item.name}
+                </Text>
+                <Text
+                  style={styles.artistText}
+                  accessible={true}
+                  accessibilityLabel={`Artist: ${item.artist}`}
+                >
+                  {item.artist}
+                </Text>
+              </View>
               <Image
                 source={item.image}
                 style={styles.image}
@@ -70,6 +79,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: "10%",
+  },
+  descriptionTextContainer: {
+    display: "flex",
+    flexDirection: "column",
+    width: "70%",
   },
   galleryHeader: {
     fontFamily: theme.fonts.karlaLight,
@@ -99,7 +113,11 @@ const styles = StyleSheet.create({
     fontFamily: theme.fonts.karlaLight,
     fontSize: 20,
     padding: 10,
-    width: "70%",
+  },
+  artistText: {
+    fontFamily: theme.fonts.karlaLight,
+    fontSize: 16,
+    padding: 10,
   },
   controlsRow: {
     flexDirection: "row",
