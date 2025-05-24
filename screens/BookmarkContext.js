@@ -100,7 +100,7 @@ export const BookmarkProvider = ({ children }) => {
           interval: 5000,
           loop: true,
           startDelay: 2000,
-          volume: 0.6,
+          volume: 0.7,
         },
         {
           element: "leaves rustling",
@@ -118,7 +118,7 @@ export const BookmarkProvider = ({ children }) => {
           interval: 6000,
           loop: true,
           startDelay: 4000,
-          volume: 0.1,
+          volume: 0.2,
         },
         {
           element: "distant wind",
