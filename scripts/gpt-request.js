@@ -330,13 +330,26 @@ export async function getAltText(base64Img) {
   }
 }
 
+const blobToBase64 = (blob) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      resolve(reader.result.split(",")[1]); // removes `data:*/*;base64,` prefix
+    };
+
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+};
+
 async function saveBufferToFile(buffer, fileName) {
   try {
     // Create a blob from the buffer
     const blob = new Blob([buffer], { type: "audio/wav" }); // or "audio/mpeg" or correct MIME type
 
     // Create a temporary download link
-    const url = URL.createObjectURL(blob);
+    /*const url = URL.createObjectURL(blob);
 
     // Trigger download
     const link = document.createElement("a");
@@ -353,7 +366,8 @@ async function saveBufferToFile(buffer, fileName) {
     const base64String = url.substring(base64Index);
 
     console.log("File download triggered:", fileName);
-    return base64String; // or return nothing
+    return base64String; // or return nothing*/
+    return await blobToBase64(blob);
   } catch (error) {
     console.error("Error saving file on web:", error);
   }

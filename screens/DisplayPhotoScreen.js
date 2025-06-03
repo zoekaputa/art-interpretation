@@ -130,7 +130,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       const descriptionAudioUri = await createAudioDescription(descText);
       const descriptionSound = new Audio.Sound();
       await descriptionSound.loadAsync(
-        { uri: `data:audio/wav;base64,${descriptionAudioUri}}` },
+        { uri: `data:audio/wav;base64,${descriptionAudioUri}` },
         { shouldPlay: false }
       );
 
@@ -229,7 +229,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
     try {
       if (loadingSound) {
         await loadingSound.pauseAsync();
-        await loadingSound.unloadAsync();
+        // await loadingSound.unloadAsync();
       }
     } catch (error) {
       console.error("Error stopping loading sound:", error);
@@ -243,7 +243,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       const sound = new Audio.Sound();
       await sound.loadAsync(
         {
-          uri: `data:audio/wav;base64,${audioFile}}`,
+          uri: `data:audio/wav;base64,${audioFile}`,
         },
         { shouldPlay: false }
       );
@@ -288,11 +288,10 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       }
 
       const localFileUri = await uploadUrlToDevice(soundUrl, desc);
-      console.log("localFileUri:", localFileUri);
       const sound = new Audio.Sound();
       await sound.loadAsync(
         {
-          uri: `data:audio/wav;base64,${localFileUri}}`,
+          uri: `data:audio/wav;base64,${localFileUri}`,
         },
         { shouldPlay: false }
       );
