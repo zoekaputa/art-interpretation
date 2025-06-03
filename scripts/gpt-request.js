@@ -5,6 +5,7 @@ import axios from "axios";
 
 const openai = new OpenAI({
   apiKey: process.env.EXPO_PUBLIC_GPT_API_KEY,
+  dangerouslyAllowBrowser: true,
 });
 
 export async function uploadUrlToDevice(url, name) {
@@ -331,16 +332,29 @@ export async function getAltText(base64Img) {
 
 async function saveBufferToFile(buffer, fileName) {
   try {
-    const base64String = Buffer.from(buffer).toString("base64");
-    const fileUri = FileSystem.documentDirectory + fileName;
+    // Create a blob from the buffer
+    const blob = new Blob([buffer], { type: "audio/wav" }); // or "audio/mpeg" or correct MIME type
 
-    await FileSystem.writeAsStringAsync(fileUri, base64String, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
+    // Create a temporary download link
+    const url = URL.createObjectURL(blob);
 
-    console.log("File saved at:", fileUri);
-    return fileUri;
+    // Trigger download
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+
+    // Clean up
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    console.log("url", url);
+    const base64Index = url.indexOf(":") + 1;
+    const base64String = url.substring(base64Index);
+
+    console.log("File download triggered:", fileName);
+    return base64String; // or return nothing
   } catch (error) {
-    console.error(error);
+    console.error("Error saving file on web:", error);
   }
 }

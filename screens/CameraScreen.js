@@ -30,7 +30,7 @@ const CameraScreen = ({ route, navigation }) => {
   const [intervalId, setIntervalId] = useState(null);
   const cameraRef = useRef(null);
 
-  useFocusEffect(
+  /*useFocusEffect(
     useCallback(() => {
       const startChecking = () => {
         console.log("setting interval1");
@@ -49,7 +49,7 @@ const CameraScreen = ({ route, navigation }) => {
         }
       };
     }, [intervalId])
-  );
+  );*/
 
   useEffect(() => {
     if (!isReady) {
@@ -63,7 +63,7 @@ const CameraScreen = ({ route, navigation }) => {
     };
 
     if (!intervalId) {
-      setTimeout(startChecking);
+      // setTimeout(startChecking);
     }
   }, [isReady]);
 
@@ -133,7 +133,9 @@ const CameraScreen = ({ route, navigation }) => {
               Welcome to Mosaic! Experience realism through sound with Mosaic.
               Simply take a picture of your artwork, and Mosaic will generate a
               detailed description and an immersive soundscape that brings your
-              art to life. You can then interact with the art-expert chatbot to further explore artwork, which will update your soundscape accordingly!
+              art to life. You can then interact with the art-expert chatbot to
+              further explore artwork, which will update your soundscape
+              accordingly!
             </Text>
             <Button title="Continue" onPress={() => setIsModalVisible(false)} />
           </View>

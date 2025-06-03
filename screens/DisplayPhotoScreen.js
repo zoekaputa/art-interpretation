@@ -32,6 +32,9 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
     require("../assets/2.wav"),
     require("../assets/3.wav"),
   ];
+  const base64Index = route.params.photo.base64.indexOf(",") + 1;
+  const base64String = route.params.photo.base64.substring(base64Index);
+
   const { addBookmark } = useBookmarks();
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -98,15 +101,14 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
         playsInSilentModeIOS: true,
       });
 
-      const descriptions = await requestSoundDescriptions(
-        route.params.photo.base64
-      );
+      const descriptions = await requestSoundDescriptions(base64String);
+
       setSoundDescriptions(descriptions);
 
-      const descText = await getAltText(route.params.photo.base64);
+      const descText = await getAltText(base64String);
       setDescriptionText(descText);
 
-      const title = await getTitle(route.params.photo.base64);
+      const title = await getTitle(base64String);
       setArtName(title);
 
       const newSounds = await Promise.all(
@@ -128,7 +130,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       const descriptionAudioUri = await createAudioDescription(descText);
       const descriptionSound = new Audio.Sound();
       await descriptionSound.loadAsync(
-        { uri: descriptionAudioUri },
+        { uri: `data:audio/wav;base64,${descriptionAudioUri}}` },
         { shouldPlay: false }
       );
 
@@ -241,7 +243,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       const sound = new Audio.Sound();
       await sound.loadAsync(
         {
-          uri: audioFile,
+          uri: `data:audio/wav;base64,${audioFile}}`,
         },
         { shouldPlay: false }
       );
@@ -286,10 +288,11 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
       }
 
       const localFileUri = await uploadUrlToDevice(soundUrl, desc);
+      console.log("localFileUri:", localFileUri);
       const sound = new Audio.Sound();
       await sound.loadAsync(
         {
-          uri: localFileUri,
+          uri: `data:audio/wav;base64,${localFileUri}}`,
         },
         { shouldPlay: false }
       );
@@ -429,7 +432,7 @@ const DisplayPhotoScreen = ({ route, navigation }) => {
                   setIsLoading={setIsLoading}
                   playLoadingSound={playLoadingSound}
                   stopLoadingSound={stopLoadingSound}
-                  image={route.params.photo.base64}
+                  image={base64String}
                   setLoadingSound={setLoadingSound}
                   isPlaying={isPlaying}
                   playSounds={playSounds}
