@@ -1,6 +1,7 @@
 import OpenAI from "openai";
 import { Buffer } from "buffer";
 import * as FileSystem from "expo-file-system";
+import fs from "fs";
 import axios from "axios";
 
 const openai = new OpenAI({
@@ -16,6 +17,7 @@ export async function uploadUrlToDevice(url, name) {
 }
 
 export async function getTranscription(audioFile) {
+  console.log("audioFile", audioFile);
   try {
     const formData = new FormData();
     formData.append("file", {
@@ -41,7 +43,7 @@ export async function getTranscription(audioFile) {
 
     const transcription = await response.json();*/
 
-    const response = await FileSystem.uploadAsync(
+    /*const response = await FileSystem.uploadAsync(
       "https://api.openai.com/v1/audio/transcriptions",
       audioFile,
       {
@@ -58,11 +60,24 @@ export async function getTranscription(audioFile) {
           model: "whisper-1",
         },
       }
-    );
+    );*/
 
-    console.log(JSON.parse(response.body).text);
+    const response = await fetch(audioFile);
+    const audioBlob = await response.blob();
 
-    return JSON.parse(response.body).text;
+    const audioFileFile = new File([audioBlob], "audio.mp3", {
+      type: "audio/mpeg",
+    });
+
+    const transcription = await openai.audio.transcriptions.create({
+      file: audioFileFile,
+      model: "whisper-1",
+    });
+
+    console.log(transcription.text);
+    // console.log(JSON.parse(response.body).text);
+
+    return transcription.text;
   } catch (error) {
     console.log(error);
   }
@@ -176,7 +191,7 @@ export async function requestSoundDescriptionUpdate(
                         If the user's request does not warrent a change, keep the json the same.
 
                         When you do make a change, make the change you describe to the elements attribute in your response.
-                        Replace removed eleemnts with null in the included list of sounds, and add any new sounds to the end of the list in the same format as the included sounds.
+                        Replace removed elements with null in the included list of sounds, and add any new sounds to the end of the list in the same format as the included sounds.
 
                         if you cannot answer the user's question, still respond in the above format, but tell them in the message attribute that you can't answer their question.
                           

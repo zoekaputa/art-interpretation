@@ -59,7 +59,7 @@ const MicButton = ({
       const sound = new Audio.Sound();
       await sound.loadAsync(
         {
-          uri: audioFile,
+          uri: `data:audio/wav;base64,${audioFile}`,
         },
         { shouldPlay: true }
       );
@@ -239,7 +239,9 @@ const MicButton = ({
         if (status.positionMillis > status.durationMillis * 0.8) {
           console.log("Done playing");
 
-          setSounds(filteredSounds);
+          if (response.elements && response.elements.length !== 0) {
+            setSounds(filteredSounds);
+          }
           resolve(true);
         }
       });
