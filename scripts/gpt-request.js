@@ -170,6 +170,8 @@ export async function requestSoundDescriptionUpdate(
   base64Img
 ) {
   try {
+    const defaultMessage =
+      "I can't answer your question, but here is the current soundscape.";
     const result = await openai.chat.completions.create({
       model: "gpt-4.1",
       messages: [
@@ -193,11 +195,9 @@ export async function requestSoundDescriptionUpdate(
                         When you do make a change, make the change you describe to the elements attribute in your response.
                         Replace removed elements with null in the included list of sounds, and add any new sounds to the end of the list in the same format as the included sounds.
 
-                        if you cannot answer the user's question, still respond in the above format, but tell them in the message attribute that you can't answer their question.
+                        if you cannot answer the user's question, still respond in the above format, but tell them in the message attribute that you can't answer their question and keep the elements attribute the same as the included elements.
                           
-                        current sound descriptions: ${JSON.stringify(
-                          descriptions
-                        )}`,
+                        current elements: ${JSON.stringify(descriptions)}`,
             },
           ],
         },
@@ -222,7 +222,11 @@ export async function requestSoundDescriptionUpdate(
     const responseText = result.choices[0].message.content;
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
-      throw new Error("No JSON found in GPT response");
+      // throw new Error("No JSON found in GPT response");
+      return {
+        message: defaultMessage,
+        elements: descriptions,
+      };
     }
     console.log(jsonMatch);
 
@@ -233,6 +237,21 @@ export async function requestSoundDescriptionUpdate(
       jsonResponse = JSON.parse(jsonMatch[0]);
     }
     console.log("updated response", jsonResponse);
+
+    if (!jsonResponse.message) {
+      return {
+        message: defaultMessage,
+        elements: descriptions,
+      };
+    }
+
+    if (
+      !jsonResponse.elements ||
+      !Array.isArray(jsonResponse.elements) ||
+      jsonResponse.elements.length === 0
+    ) {
+      jsonResponse.elements = descriptions;
+    }
 
     return jsonResponse;
   } catch (error) {

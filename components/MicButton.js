@@ -250,7 +250,10 @@ const MicButton = ({
     await stopLoadingSound(loadingSound);
     setLoadingSound(null);
 
-    setSoundDescriptions(response.descriptions);
+    const filteredDescriptions = response.elements.filter(
+      (item) => item !== null
+    );
+    setSoundDescriptions(filteredDescriptions);
 
     setIsLoading(false);
   };
